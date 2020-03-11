@@ -1,0 +1,205 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog_main_dept_employees.yaml
+  - changeSet:
+      id: insert_table_Main_Dept_Employees
+      author: postgres
+      changes:
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Василевская"
+              - column:
+                  name: first_name
+                  value: "Наталья"
+              - column:
+                  name: middle_name
+                  value: "Николаевна"
+              - column:
+                  name: birth_date
+                  value: "1979-11-02"
+              - column:
+                  name: passport
+                  value: "Серия: 22 13 Номер: 122134"
+              - column:
+                  name: md_id
+                  value: 1
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Медведев"
+              - column:
+                  name: first_name
+                  value: "Игорь"
+              - column:
+                  name: middle_name
+                  value: "Александрович"
+              - column:
+                  name: birth_date
+                  value: "1949-05-11"
+              - column:
+                  name: passport
+                  value: "Серия: 12 43 Номер: 532214"
+              - column:
+                  name: md_id
+                  value: 1
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Дружинин"
+              - column:
+                  name: first_name
+                  value: "Юрий"
+              - column:
+                  name: middle_name
+                  value: "Михайлович"
+              - column:
+                  name: birth_date
+                  value: "1968-09-12"
+              - column:
+                  name: passport
+                  value: "Серия: 26 12 Номер: 671315"
+              - column:
+                  name: md_id
+                  value: 1
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Веловский"
+              - column:
+                  name: first_name
+                  value: "Гавриил"
+              - column:
+                  name: middle_name
+                  value: "Максимович"
+              - column:
+                  name: birth_date
+                  value: "1959-01-02"
+              - column:
+                  name: passport
+                  value: "Серия: 73 12 Номер: 643165"
+              - column:
+                  name: md_id
+                  value: 2
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Колесникова"
+              - column:
+                  name: first_name
+                  value: "Ольга"
+              - column:
+                  name: middle_name
+                  value: "Константиновна"
+              - column:
+                  name: birth_date
+                  value: "1982-09-10"
+              - column:
+                  name: passport
+                  value: "Серия: 51 12 Номер: 145125"
+              - column:
+                  name: md_id
+                  value: 2
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Константинов"
+              - column:
+                  name: first_name
+                  value: "Константин"
+              - column:
+                  name: middle_name
+                  value: "Валерьевич"
+              - column:
+                  name: birth_date
+                  value: "1959-06-02"
+              - column:
+                  name: passport
+                  value: "Серия: 22 13 Номер: 524215"
+              - column:
+                  name: md_id
+                  value: 2
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Бойков"
+              - column:
+                  name: first_name
+                  value: "Фёдор"
+              - column:
+                  name: middle_name
+                  value: "Валерьевич"
+              - column:
+                  name: birth_date
+                  value: "1979-05-15"
+              - column:
+                  name: passport
+                  value: "Серия: 21 25 Номер: 416523"
+              - column:
+                  name: md_id
+                  value: 3
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Бойкова"
+              - column:
+                  name: first_name
+                  value: "Валерия"
+              - column:
+                  name: middle_name
+                  value: "Ивановна"
+              - column:
+                  name: birth_date
+                  value: "1979-05-12"
+              - column:
+                  name: passport
+                  value: "Серия: 32 15 Номер: 251214"
+              - column:
+                  name: md_id
+                  value: 3
+
+        - insert:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: last_name
+                  value: "Соломонов"
+              - column:
+                  name: first_name
+                  value: "Юрий"
+              - column:
+                  name: middle_name
+                  value: "Иванович"
+              - column:
+                  name: birth_date
+                  value: "1964-06-16"
+              - column:
+                  name: passport
+                  value: "Серия: 21 82 Номер: 573215"
+              - column:
+                  name: md_id
+                  value: 3
+
+

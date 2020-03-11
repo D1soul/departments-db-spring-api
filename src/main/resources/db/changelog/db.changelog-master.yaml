@@ -1,0 +1,147 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
+  - changeSet:
+      id: сreate_table_Main_Departments
+      author: postgres
+      changes:
+        - createTable:
+            tableName: main_departments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+
+  - changeSet:
+      id: сreate_Table_Main_Dept_Employees
+      author: postgres
+      changes:
+        - createTable:
+            tableName: main_dept_employees
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: middle_name
+                  type: varchar(50)
+              - column:
+                  name: birth_date
+                  type: date
+              - column:
+                  name: passport
+                  type: varchar(50)
+              - column:
+                  name: md_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (md_id)
+                    foreignKeyName: FK_Empl_Main_Department_Id
+                    references: main_departments(id)
+
+  - changeSet:
+      id: сreate_table_Sub_Departments
+      author: postgres
+      changes:
+        - createTable:
+            tableName:  sub_departments
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+              - column:
+                  name: md_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (md_id)
+                    foreignKeyName: FK_SD_Main_Department_Id
+                    references: main_departments(id)
+
+  - changeSet:
+      id: сreate_Table_Sub_Dept_Employees
+      author: postgres
+      changes:
+        - createTable:
+            tableName: sub_dept_employees
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(50)
+              - column:
+                  name: first_name
+                  type: varchar(50)
+              - column:
+                  name: middle_name
+                  type: varchar(50)
+              - column:
+                  name: birth_date
+                  type: date
+              - column:
+                  name: passport
+                  type: varchar(50)
+              - column:
+                  name: sd_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (sd_id)
+                    foreignKeyName: FK_Empl_Sub_Department_Id
+                    references: sub_departments(id)
+
+      rollback:
+        - dropTable:
+            tableName: sub_dept_employees
+        - dropTable:
+            tableName: sub_departments
+        - dropTable:
+            tableName: main_dept_employees
+        - dropTable:
+            tableName: main_departments
+
+  - include:
+      file: db.changelog_main_departments.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db.changelog_main_dept_employees.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db.changelog_sub_departments.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db.changelog_sub_dept_employees.yaml
+      relativeToChangelogFile: true

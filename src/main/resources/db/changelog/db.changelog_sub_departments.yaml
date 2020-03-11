@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog_sub_departments.yaml
+  - changeSet:
+      id: insert_table_Sub_Departments
+      author: postgres
+      changes:
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Департамент дошкольного образования"
+              - column:
+                  name: md_id
+                  value: 1
+
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Департамент общего образования"
+              - column:
+                  name: md_id
+                  value: 1
+
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Департамент территориального планирования и городского зонирования"
+              - column:
+                  name: md_id
+                  value: 2
+
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Департамент информационного обеспечения градостроительства"
+              - column:
+                  name: md_id
+                  value: 2
+
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Отдел обеспечения лекарственными средствами и медицинскими приборами"
+              - column:
+                  name: md_id
+                  value: 3
+
+        - insert:
+            tableName: sub_departments
+            columns:
+              - column:
+                  name: name
+                  value: "Департамент финансового учета"
+              - column:
+                  name: md_id
+                  value: 3
+
+
+
