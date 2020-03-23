@@ -47,8 +47,6 @@ public class MainDeptEmployee implements Serializable {
     @JoinColumn(name = "md_id", nullable = false)
     private MainDepartment mainDepartment;
 
-
-
     public String toString(){
         return "\n Id: " + id + "\n  First Name: " + firstName
                 + "\n  Middle Name: " + middleName + "\n Last Name: " + lastName
