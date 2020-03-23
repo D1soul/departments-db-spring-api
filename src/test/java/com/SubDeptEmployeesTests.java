@@ -1,6 +1,6 @@
 package com;
 
-import com.departments_db_rest_api_angular.SpringRestApiRunner;
+import ru.d1soul.departments.db.app.SpringRestApiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
