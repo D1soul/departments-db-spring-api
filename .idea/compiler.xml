@@ -13,12 +13,14 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.10/lombok-1.18.10.jar" />
         </processorPath>
-        <module name="departments-db-spring-app.main" />
+        <module name="departments-db-spring-api.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="departments-db-app.main" target="1.8" />
       <module name="departments-db-app.test" target="1.8" />
+      <module name="departments-db-spring-app.main" target="1.8" />
+      <module name="departments-db-spring-app.test" target="1.8" />
       <module name="departments_db_rest_api.main" target="1.8" />
       <module name="departments_db_rest_api.test" target="1.8" />
       <module name="departments_db_rest_api_alt.main" target="1.8" />

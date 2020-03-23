@@ -1,6 +1,6 @@
 package com;
 
-import ru.d1soul.SpringRestApiRunner;
+import ru.d1soul.departments.SpringRestApiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
