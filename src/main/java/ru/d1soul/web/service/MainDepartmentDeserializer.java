@@ -3,7 +3,6 @@ package ru.d1soul.web.service;
 import ru.d1soul.api.service.MainDepartmentService;
 import ru.d1soul.model.MainDepartment;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class MainDepartmentDeserializer extends JsonDeserializer<MainDepartment>
     }
 
     @Override
-    public MainDepartment deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public MainDepartment deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
 
         String name = jsonParser.getValueAsString();
 
