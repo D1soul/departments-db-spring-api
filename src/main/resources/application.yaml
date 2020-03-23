@@ -1,10 +1,10 @@
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/departmentsDbAngular
     username: postgres
     password: root
-    url: jdbc:postgresql://localhost:9300/departmentsDbAngular
+
   jpa:
     database: postgresql
     hibernate:
