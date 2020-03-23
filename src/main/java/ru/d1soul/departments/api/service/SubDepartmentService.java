@@ -1,6 +1,6 @@
-package ru.d1soul.api.service;
+package ru.d1soul.departments.api.service;
 
-import ru.d1soul.model.SubDepartment;
+import ru.d1soul.departments.model.SubDepartment;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
