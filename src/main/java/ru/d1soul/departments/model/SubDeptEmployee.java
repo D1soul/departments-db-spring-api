@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,22 +29,35 @@ public class SubDeptEmployee implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NotNull
+    @Size(min = 2, max = 20)
+    @Pattern(regexp = "^([А-я]+|[A-z]+)$")
     @Column(name = "last_name")
     private String lastName;
 
+    @NotNull
+    @Size(min = 2, max = 20)
+    @Pattern(regexp = "^([А-я]+|[A-z]+)$")
     @Column(name = "first_name")
     private String firstName;
 
+    @NotNull
+    @Size(min = 1, max = 25)
+    @Pattern(regexp = "^(([А-я]+|[A-z]+)|(-))$")
     @Column(name = "middle_name")
     private String middleName;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "birth_date")
     private Date birthDate;
 
+    @Pattern(regexp = "^(Серия:\\s?)\\d{2}\\s"
+            + "\\d{2}\\s(Номер:\\s?)\\d{6}$")
     @Column(name = "passport")
     private String passport;
 
+    @NotNull
     @JsonSerialize(using = SubDepartmentSerializer.class)
     @JsonDeserialize(using = SubDepartmentDeserializer.class)
     @ManyToOne
