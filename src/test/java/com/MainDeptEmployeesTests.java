@@ -1,5 +1,6 @@
 package com;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.d1soul.departments.SpringRestApiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import ru.d1soul.departments.api.service.MainDepartmentService;
+import ru.d1soul.departments.model.MainDeptEmployee;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +31,14 @@ public class MainDeptEmployeesTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    MainDepartmentService mainDepartmentService;
+
+
     private static final String URL_FIND_MAIN_DEPT_EMPL_BY_FULL_NAME =
             "http://localhost:8080/departments-app/main_dept_employees/{lastName}/{firstName}/{middleName}";
     private static final String URL_FIND_ALL_MAIN_DEPT_EMPL = "http://localhost:8080/departments-app/main_dept_employees";
@@ -53,40 +68,32 @@ public class MainDeptEmployeesTests {
 
     @Test
     public  void createMainDeptEmplTest() throws Exception{
-        String createEmpl = "{"
-                          + "\"lastName\": \"Куличин\","
-                          + "\"firstName\": \"Игнат\","
-                          + "\"middleName\": \"Асанович\","
-                          + "\"birthDate\": \"01/мая/1959\","
-                          + "\"passport\": \"Серия: 52 13 Номер: 653214\","
-                          + "\"mainDepartment\": \"Департамент здравоохранения\""
-                          + "}";
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(URL_CREATE_MAIN_DEPT_EMPL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(createEmpl))
+                .content(objectMapper.writeValueAsString(new MainDeptEmployee(
+                        null, "Куличин", "Игнат", "Асанович",
+                            new Date(new GregorianCalendar(1940, 8, 16).getTime().getTime()),
+                   "Серия: 52 13 Номер: 653214",
+                            mainDepartmentService.findByName("Департамент здравоохранения").get()))))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
 
     @Test
     public  void updateMainDeptEmplTest() throws Exception{
-        String updateEmpl = "{"
-                          + "\"lastName\": \"Кузьмин\","
-                          + "\"firstName\": \"Алексей\","
-                          + "\"middleName\": \"Александрович\","
-                          + "\"birthDate\": \"05/ноября/1949\","
-                          + "\"passport\": \"Серия: 12 43 Номер: 532214\","
-                          + "\"mainDepartment\": \"Департамент здравоохранения\""
-                          + "}";
 
         mockMvc.perform(MockMvcRequestBuilders
-                .put(URL_UPDATE_MAIN_DEPT_EMPL, "Кузьмин", "Алексей", "Александрович")
+                .put(URL_UPDATE_MAIN_DEPT_EMPL, "Дружинин", "Юрий", "Михайлович")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(updateEmpl))
+                .content(objectMapper.writeValueAsString(new MainDeptEmployee(
+                     null, "Дружинин", "Юрий", "Михайлович",
+                         new Date(new GregorianCalendar(1968, 6, 12).getTime().getTime()),
+                "Серия: 26 42 Номер: 671315",
+                            mainDepartmentService.findByName("Департамент образования и науки").get()))))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

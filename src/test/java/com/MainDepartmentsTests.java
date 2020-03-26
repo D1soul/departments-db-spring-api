@@ -1,5 +1,6 @@
 package com;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.d1soul.departments.SpringRestApiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.d1soul.departments.model.MainDepartment;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,6 +25,10 @@ public class MainDepartmentsTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private static final String URL_FIND_ALL_MAIN_DEPARTMENTS = "http://localhost:8080/departments-app/main_departments";
     private static final String URL_FIND_MAIN_DEP_BY_NAME = "http://localhost:8080/departments-app/main_departments/{name}";
     private static final String URL_UPDATE_MAIN_DEP = "http://localhost:8080/departments-app/main_departments/{name}";
@@ -48,32 +54,28 @@ public class MainDepartmentsTests {
     }
 
     @Test
-    public  void updateMainDepTest() throws Exception{
-        String updateMainDep = "{"
-                             +  "\"name\": \"Департамент архитектуры и строительства\""
-                             +  "}";
-
-        mockMvc.perform(MockMvcRequestBuilders
-                .put(URL_UPDATE_MAIN_DEP, "Департамент архитектуры")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(updateMainDep))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
-
-    @Test
     public  void createMainDepTest() throws Exception{
-        String createMainDep = "{"
-                             + "\"name\": \"Департамент сельского хозяйства\""
-                             + "}";
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(URL_CREATE_MAIN_DEP)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(createMainDep))
+                .content(objectMapper.writeValueAsString(new MainDepartment(
+                        "Департамент сельского хозяйства"))))
                 .andExpect(status().isCreated())
+                .andDo(print());
+    }
+
+    @Test
+    public  void updateMainDepTest() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put(URL_UPDATE_MAIN_DEP, "Департамент сельского хозяйства")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new MainDepartment(
+                        "Департамент сельского хозяйства и агрономии"))))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
@@ -81,7 +83,7 @@ public class MainDepartmentsTests {
     public void deleteMainDepTest() throws Exception
     {
         mockMvc.perform( MockMvcRequestBuilders
-                .delete(URL_DELETE_MAIN_DEP, "Департамент сельского хозяйства") )
+                .delete(URL_DELETE_MAIN_DEP, "Департамент сельского хозяйства и агрономии") )
                 .andExpect(status().isNoContent());
 
         mockMvc.perform(MockMvcRequestBuilders

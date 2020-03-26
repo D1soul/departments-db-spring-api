@@ -1,4 +1,4 @@
-package ru.d1soul.departments.web.service;
+package ru.d1soul.departments.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

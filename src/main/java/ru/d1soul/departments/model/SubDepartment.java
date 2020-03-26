@@ -1,13 +1,10 @@
 package ru.d1soul.departments.model;
 
-import ru.d1soul.departments.web.service.MainDepartmentDeserializer;
-import ru.d1soul.departments.web.service.MainDepartmentSerializer;
+import lombok.*;
+import ru.d1soul.departments.web.MainDepartmentDeserializer;
+import ru.d1soul.departments.web.MainDepartmentSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -18,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "sub_departments")
 public class SubDepartment implements Serializable {
@@ -28,12 +25,14 @@ public class SubDepartment implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NonNull
     @NotNull
     @Size(min=5, max = 60)
     @Pattern(regexp = "^(([А-я]+\\s?)+|([A-z]+\\s?)+)$")
     @Column(name = "name")
     private String name;
 
+    @NonNull
     @NotNull
     @JsonSerialize(using = MainDepartmentSerializer.class)
     @JsonDeserialize(using = MainDepartmentDeserializer.class)
@@ -42,7 +41,7 @@ public class SubDepartment implements Serializable {
     private MainDepartment mainDepartment;
 
     @OrderBy("id asc ")
-    @OneToMany(mappedBy = "subDepartment", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(mappedBy = "subDepartment", cascade = CascadeType.ALL, orphanRemoval=true)
     private Set<SubDeptEmployee> employees;
 
     public String toString(){

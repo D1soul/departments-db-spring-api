@@ -1,4 +1,4 @@
-package ru.d1soul.departments.web.service;
+package ru.d1soul.departments.web;
 
 import ru.d1soul.departments.api.service.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
@@ -6,17 +6,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonComponent;
-
 import java.io.IOException;
 
-@JsonComponent
 public class MainDepartmentDeserializer extends JsonDeserializer<MainDepartment> {
 
     private MainDepartmentService mainDepartmentService;
-
-    public MainDepartmentDeserializer(){
-    }
 
     @Autowired
     public MainDepartmentDeserializer(MainDepartmentService mainDepartmentService){

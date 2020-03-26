@@ -4,11 +4,6 @@ plugins {
     id 'org.springframework.boot' version '2.2.4.RELEASE'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
 repositories {
     mavenLocal()
     mavenCentral()
@@ -24,10 +19,10 @@ dependencies {
     compile('org.springframework.data:spring-data-jpa:2.2.4.RELEASE')
     compile('org.postgresql:postgresql:42.2.9')
 
-    compile('org.projectlombok:lombok:1.18.10')
-    annotationProcessor('org.projectlombok:lombok:1.18.10')
+    compile('org.projectlombok:lombok:1.18.12')
+    annotationProcessor('org.projectlombok:lombok:1.18.12')
 
-    testAnnotationProcessor('org.projectlombok:lombok:1.18.10')
+    testAnnotationProcessor('org.projectlombok:lombok:1.18.12')
     testCompile('org.springframework.boot:spring-boot-starter-test:2.2.4.RELEASE')
 }
 

@@ -1,13 +1,11 @@
 package ru.d1soul.departments.model;
 
-import ru.d1soul.departments.web.service.MainDepartmentDeserializer;
-import ru.d1soul.departments.web.service.MainDepartmentSerializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import ru.d1soul.departments.web.MainDepartmentDeserializer;
+import ru.d1soul.departments.web.MainDepartmentSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -47,16 +45,17 @@ public class MainDeptEmployee implements Serializable {
     private String middleName;
 
     @NotNull
+    @JsonFormat(pattern="dd/MMMM/yyyy")
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "birth_date")
     private Date birthDate;
 
+    @NotNull
     @Pattern(regexp = "^(Серия:\\s?)\\d{2}\\s"
             + "\\d{2}\\s(Номер:\\s?)\\d{6}$")
     @Column(name = "passport")
     private String passport;
 
-    @NotNull
     @JsonSerialize(using = MainDepartmentSerializer.class)
     @JsonDeserialize(using = MainDepartmentDeserializer.class)
     @ManyToOne
