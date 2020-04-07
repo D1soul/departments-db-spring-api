@@ -1,5 +1,85 @@
 databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-master.yaml
+
+  - changeSet:
+      id: сreate_table_Users
+      author: postgres
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: varchar(50)
+              - column:
+                  name: password
+                  type: varchar(100)
+              - column:
+                  name: confirm_password
+                  type: varchar(100)
+              - column:
+                  name: birth_date
+                  type: date
+              - column:
+                  name: gender
+                  type: varchar(50)
+
+  - changeSet:
+      id: сreate_table_Roles
+      author: postgres
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(50)
+
+  - changeSet:
+      id: сreate_table_Users_Roles
+      author: postgres
+      changes:
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: users_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (users_id)
+                    foreignKeyName: FK_Users_Id
+                    references: users(id)
+              - column:
+                  name: roles_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (roles_id)
+                    foreignKeyName: FK_Roles_Id
+                    references: roles(id)
+
   - changeSet:
       id: сreate_table_Main_Departments
       author: postgres
@@ -129,6 +209,24 @@ databaseChangeLog:
             tableName: main_dept_employees
         - dropTable:
             tableName: main_departments
+        - dropTable:
+            tableName: users
+        - dropTable:
+            tableName: roles
+        - dropTable:
+            tableName: users_roles
+
+  - include:
+      file: db.changelog_users.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db.changelog_roles.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db.changelog_users_roles.yaml
+      relativeToChangelogFile: true
 
   - include:
       file: db.changelog_main_departments.yaml

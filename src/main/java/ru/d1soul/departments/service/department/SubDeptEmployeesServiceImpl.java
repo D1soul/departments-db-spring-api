@@ -1,7 +1,7 @@
-package ru.d1soul.departments.service;
+package ru.d1soul.departments.service.department;
 
-import ru.d1soul.departments.api.repository.SubDeptEmployeesRepository;
-import ru.d1soul.departments.api.service.SubDeptEmployeesService;
+import ru.d1soul.departments.api.repository.department.SubDeptEmployeesRepository;
+import ru.d1soul.departments.api.service.department.SubDeptEmployeesService;
 import ru.d1soul.departments.model.SubDeptEmployee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

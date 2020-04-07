@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.d1soul.departments.api.service.SubDepartmentService;
+import ru.d1soul.departments.api.service.department.SubDepartmentService;
 import ru.d1soul.departments.model.SubDeptEmployee;
 import java.util.Date;
 import java.util.GregorianCalendar;

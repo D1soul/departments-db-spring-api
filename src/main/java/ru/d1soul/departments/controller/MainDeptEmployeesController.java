@@ -1,7 +1,7 @@
 package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.model.MainDeptEmployee;
-import ru.d1soul.departments.api.service.MainDeptEmployeesService;
+import ru.d1soul.departments.api.service.department.MainDeptEmployeesService;
 import ru.d1soul.departments.web.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;

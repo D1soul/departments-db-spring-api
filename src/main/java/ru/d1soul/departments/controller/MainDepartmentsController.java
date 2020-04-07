@@ -1,6 +1,6 @@
 package ru.d1soul.departments.controller;
 
-import ru.d1soul.departments.api.service.MainDepartmentService;
+import ru.d1soul.departments.api.service.department.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
 import ru.d1soul.departments.web.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,6 +13,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa:2.2.4.RELEASE')
     compile('org.springframework.boot:spring-boot-autoconfigure:2.2.4.RELEASE')
     compile('org.springframework.boot:spring-boot-starter-web:2.2.4.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-security:2.2.4.RELEASE')
 
     compile('org.hibernate:hibernate-entitymanager:5.4.3.Final')
     compile('org.liquibase:liquibase-core:3.8.0')

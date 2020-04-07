@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog_users.yaml
+  - changeSet:
+      id: insert_table_users
+      author: postgres
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name
+                  value: "admin"
+              - column:
+                  name: password
+                  value: "$2a$10$O9k0lg/uELXbHchLEi5sDuxrkiyhZ/3JL9DulI1ZlRSr/ixRhMWh6" #"admin"
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$0ZdmPCT4ye3PapEnd8CfcOpRLG.VlgC1y075tdV2MVzbZan9dzaxu" #"admin"
+              - column:
+                  name: birth_date
+                  value: "2020-04-01"
+              - column:
+                  name: gender
+                  value: "male"
+

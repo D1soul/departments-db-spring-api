@@ -1,4 +1,4 @@
-package ru.d1soul.departments.api.service;
+package ru.d1soul.departments.api.service.department;
 
 import ru.d1soul.departments.model.MainDeptEmployee;
 import org.springframework.data.domain.Sort;

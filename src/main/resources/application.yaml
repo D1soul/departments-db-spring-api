@@ -1,7 +1,7 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:9300/departmentsDbAngular
+    url: jdbc:postgresql://localhost:5432/departmentsDbAngular
     username: postgres
     password: root
 
@@ -28,6 +28,11 @@ spring:
     default-property-inclusion: non_null
     serialization:
        indent-output: true
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+      roles: "role_admin"
 
 logging:
   level:

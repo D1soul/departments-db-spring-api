@@ -1,6 +1,6 @@
 package ru.d1soul.departments.web;
 
-import ru.d1soul.departments.api.service.SubDepartmentService;
+import ru.d1soul.departments.api.service.department.SubDepartmentService;
 import ru.d1soul.departments.model.SubDepartment;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

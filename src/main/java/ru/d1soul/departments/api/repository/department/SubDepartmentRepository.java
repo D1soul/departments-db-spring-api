@@ -1,4 +1,4 @@
-package ru.d1soul.departments.api.repository;
+package ru.d1soul.departments.api.repository.department;
 
 import ru.d1soul.departments.model.SubDepartment;
 import org.springframework.data.domain.Sort;
