@@ -16,7 +16,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: user_name
+                  name: username
                   type: varchar(50)
               - column:
                   name: password

@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.d1soul.departments.api.service.authentification.UserService;
 import ru.d1soul.departments.model.AuthUser;
 import ru.d1soul.departments.model.Role;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,15 +34,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        AuthUser authUser = userService.findByUserName(userName).get();
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AuthUser user = userService.findByUsername(username).get();
 
-        if (authUser != null){
-            Set<GrantedAuthority> authorities = grantedAuthorities(authUser.getRoles());
-            return new User(authUser.getUserName(), authUser.getPassword(), authorities);
+        if (user != null){
+            Set<GrantedAuthority> authorities = grantedAuthorities(user.getRoles());
+            return new User(user.getUsername(), user.getPassword(), authorities);
         }
         else {
-            throw new UsernameNotFoundException("username not found");
+            throw new UsernameNotFoundException("Username not found");
         }
     }
 

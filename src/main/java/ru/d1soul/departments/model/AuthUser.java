@@ -23,8 +23,8 @@ public class AuthUser implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "password")
     private String password;

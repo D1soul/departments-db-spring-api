@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import ru.d1soul.departments.api.repository.authentification.UserRepository;
 import ru.d1soul.departments.api.service.authentification.UserService;
 import ru.d1soul.departments.model.AuthUser;
-
+import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -20,44 +20,52 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     public UserController(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/register")
+    @GetMapping(value = "/users")
     public List<AuthUser> findAllMainDeptEmpl() {
-        return userRepository.findAll();
-    }
-
-
-
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = "/register")
-    public AuthUser registerUser (@Valid @RequestBody AuthUser authUser) {
-        authUser.setPassword(bCryptPasswordEncoder.encode(authUser.getPassword()));
-        authUser.setConfirmPassword(bCryptPasswordEncoder.encode(authUser.getConfirmPassword()));
-        return  userRepository.save(authUser);
+        return userService.findAll();
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = "/update-user{userName}")
-    public AuthUser updateUser(@PathVariable  String userName, @Valid @RequestBody AuthUser authUser){
-        return userService.findByUserName(userName).map(userUpd -> {
-            userUpd.setUserName(authUser.getUserName());
-            userUpd.setPassword(bCryptPasswordEncoder.encode(authUser.getPassword()));
-            userUpd.setConfirmPassword(bCryptPasswordEncoder.encode(authUser.getConfirmPassword()));
-            userUpd.setBirthDate(authUser.getBirthDate());
-            userUpd.setGender(authUser.getGender());
-            userUpd.setRoles(authUser.getRoles());
+    @GetMapping(value = "/users/{username}")
+    public AuthUser findUserByUsername(@PathVariable String username){
+        Optional<AuthUser> user = userService.findByUsername(username);
+        if(user.isPresent()) {
+            return user.get();
+        }
+        else throw new NotFoundException("User with Username: " + username + " Not Found!");
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/registration")
+    public AuthUser registerUser (@Valid @RequestBody AuthUser user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
+        return  userService.save(user);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/users/{username}")
+    public AuthUser updateUser(@PathVariable  String username, @Valid @RequestBody AuthUser user){
+        return userService.findByUsername(username).map(userUpd -> {
+            userUpd.setUsername(user.getUsername());
+            userUpd.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            userUpd.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
+            userUpd.setBirthDate(user.getBirthDate());
+            userUpd.setGender(user.getGender());
+            userUpd.setRoles(user.getRoles());
             return userService.save(userUpd);
         }).get();
     }
 
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(value =  "/users/{username}")
+    public void deleteUser(@PathVariable String username) {
+       userService.deleteByUsername(username);
+    }
 }
