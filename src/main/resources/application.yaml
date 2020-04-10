@@ -37,3 +37,7 @@ spring:
 logging:
   level:
     root: info
+
+jwt:
+  secretKey: secretKey
+  validityPeriod: 3600000

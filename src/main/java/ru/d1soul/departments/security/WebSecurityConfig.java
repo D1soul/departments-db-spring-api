@@ -42,9 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/departments-app/main_departments").permitAll()
                         .anyRequest().authenticated()
                         .and().formLogin()
-                        //.loginPage("/login")
-                        //.failureUrl("/login?error=true")
-                        .defaultSuccessUrl("http://localhost:8080/register")
+                     //   .loginPage("/login")
+                        .failureUrl("/login?error=true")
+                    //    .defaultSuccessUrl("http://localhost:8080/register")
                         .and().logout().logoutUrl("/logout");
     }
 
