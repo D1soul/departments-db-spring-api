@@ -1,8 +1,6 @@
 package ru.d1soul.departments.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +13,12 @@ import ru.d1soul.departments.model.Role;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
 import java.util.Set;
 
+//@SuppressWarnings("rawtypes")
 @Component
 public class JwtTokenProvider {
 
@@ -65,5 +65,28 @@ public class JwtTokenProvider {
           return Jwts.parserBuilder().setSigningKey(decodeSecretKey())
                                      .build().parseClaimsJws(username)
                                      .getBody().getSubject();
+    }
+
+    public String jwtRequestToken(HttpServletRequest request) {
+        String jwtHeader = request.getHeader("Authorization");
+        if (jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
+            return jwtHeader.substring(7, jwtHeader.length());
+        }
+        return null;
+    }
+
+    public boolean validateToken(String jwtToken){
+        try {
+            Jwt<JwsHeader, Claims> claims =
+                    Jwts.parserBuilder().setSigningKey(decodeSecretKey())
+                                        .build().parseClaimsJws(jwtToken);
+            if(claims.getBody().getExpiration().before(new Date())){
+                return false;
+            }
+        }
+        catch (JwtException ex){
+            throw new JwtException("Expired or invalid JWT token");
+        }
+        return true;
     }
 }
