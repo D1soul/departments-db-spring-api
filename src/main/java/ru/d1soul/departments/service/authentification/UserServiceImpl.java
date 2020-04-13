@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.d1soul.departments.api.repository.authentification.UserRepository;
 import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.AuthUser;
+import ru.d1soul.departments.model.User;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -21,18 +22,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<AuthUser> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<AuthUser> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
-    public AuthUser save(AuthUser user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
 

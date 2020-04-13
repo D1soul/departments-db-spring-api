@@ -1,14 +1,14 @@
 package ru.d1soul.departments.api.service.authentification;
 
-import ru.d1soul.departments.model.AuthUser;
+import ru.d1soul.departments.model.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-   List<AuthUser> findAll();
-   Optional<AuthUser> findByUsername(String username);
-   AuthUser save(AuthUser authUser);
+   List<User> findAll();
+   Optional<User> findByUsername(String username);
+   User save(User user);
    void deleteByUsername(String username);
 }
 

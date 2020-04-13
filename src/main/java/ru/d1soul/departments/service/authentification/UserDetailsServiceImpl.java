@@ -2,30 +2,26 @@ package ru.d1soul.departments.service.authentification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.AuthUser;
-import ru.d1soul.departments.model.Role;
-import java.util.HashSet;
-import java.util.Set;
+import ru.d1soul.departments.model.User;
+import ru.d1soul.departments.security.jwt.dto.JwtUserDetails;
 
-@Configuration
-@EnableWebSecurity
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private UserService userService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserDetailsServiceImpl(UserService userService) {
+    public UserDetailsServiceImpl(UserService userService,
+                                  BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Bean
@@ -33,24 +29,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AuthUser user = userService.findByUsername(username).get();
-
-        if (user != null){
-            Set<GrantedAuthority> authorities = grantedAuthorities(user.getRoles());
-            return new User(user.getUsername(), user.getPassword(), authorities);
-        }
-        else {
-            throw new UsernameNotFoundException("Username not found");
-        }
+    public void saveUser(User user) {
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        newUser.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
+        newUser.setBirthDate(user.getBirthDate());
+        newUser.setGender(user.getGender());
+        newUser.setRoles(user.getRoles());
+        userService.save(user);
     }
 
-    public Set<GrantedAuthority> grantedAuthorities(Set<Role> roles){
-        Set<GrantedAuthority> authorityRole = new HashSet<>();
-        for (Role role: roles){
-            authorityRole.add(new SimpleGrantedAuthority(role.getRole()));
-        }
-        return authorityRole;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userService.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("User Not Found with -> username or email : " + username)
+        );
+        return JwtUserDetails.createUser(user);
     }
 }
