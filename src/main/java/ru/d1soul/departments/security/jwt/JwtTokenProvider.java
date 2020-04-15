@@ -5,6 +5,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
@@ -17,11 +19,11 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private UserDetailsServiceImpl userService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public JwtTokenProvider( UserDetailsServiceImpl userService) {
-        this.userService = userService;
+    public JwtTokenProvider( UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Value("{jwt.secretKey}")
@@ -30,10 +32,17 @@ public class JwtTokenProvider {
     @Value("${jwt.validityPeriod}")
     private long validityPeriod;
 
-    @PostConstruct
+   // @PostConstruct
     private Key decodeSecretKey() {
         byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public UsernamePasswordAuthenticationToken getAuthentication(String jwtUsername) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUsername);
+
+         return new UsernamePasswordAuthenticationToken(userDetails,
+                null, userDetails.getAuthorities());
     }
 
     public String createToken(JwtUserDto jwtUserDto){

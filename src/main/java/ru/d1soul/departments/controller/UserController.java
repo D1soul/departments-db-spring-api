@@ -10,14 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.d1soul.departments.api.service.authentification.UserService;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.security.jwt.dto.JwtResponse;
 import ru.d1soul.departments.security.jwt.JwtTokenProvider;
-import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
 import java.util.List;
@@ -30,21 +28,16 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "")
 public class UserController {
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
-    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public UserController(UserDetailsServiceImpl userDetailsService,
-                          UserService userService, JwtTokenProvider jwtTokenProvider,
-                          BCryptPasswordEncoder bCryptPasswordEncoder,
+    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider,
                           AuthenticationManager authenticationManager) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userDetailsService = userDetailsService;
         this.userService = userService;
     }
 
@@ -62,8 +55,30 @@ public class UserController {
                                        .collect(Collectors.toSet());
 
         String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-        return new ResponseEntity<JwtResponse>(new JwtResponse(username, token), HttpStatus.OK);
+        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/jwt-response")
+    public String findJwtResponse() {
+        User user2 = userService.findByUsername("admin").get();
+        Authentication authentication =
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                        user2.getUsername(), user2.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getAuthorities();
+        String username = userDetails.getUsername();
+        String password = userDetails.getPassword();
+        Set<String> roles = userDetails.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+
+        String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
+
+
+        return token;
+    }
+
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users")
@@ -86,7 +101,7 @@ public class UserController {
     public void registerUser (@Valid @RequestBody User user) {
         Optional<User> newUser = userService.findByUsername(user.getUsername());
         if (newUser.isEmpty()){
-              userDetailsService.saveUser(user);
+              userService.save(user);
         }
         else {
             throw new BadCredentialsException("User with username: " + newUser.get().getUsername() + " already exists");
@@ -95,9 +110,18 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{username}")
-    public void updateUser(@PathVariable  String username, @Valid @RequestBody User user){
-       user = userService.findByUsername(username).get();
-       userDetailsService.saveUser(user);
+    public User updateUser(@PathVariable  String username,
+                           @Valid @RequestBody User user){
+
+       return userService.findByUsername(username).map(newUser -> {
+           newUser.setUsername(user.getUsername());
+           newUser.setPassword(user.getPassword());
+           newUser.setConfirmPassword(user.getConfirmPassword());
+           newUser.setBirthDate(user.getBirthDate());
+           newUser.setGender(user.getGender());
+           newUser.setRoles(user.getRoles());
+           return userService.save(newUser);
+       }).get();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
