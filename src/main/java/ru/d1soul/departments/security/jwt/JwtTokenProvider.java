@@ -1,8 +1,6 @@
 package ru.d1soul.departments.security.jwt;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +11,7 @@ import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @SuppressWarnings("rawtypes")
@@ -33,10 +32,16 @@ public class JwtTokenProvider {
     private long validityPeriod;
 
    // @PostConstruct
-    private Key decodeSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+  //  private Key decodeSecretKey() {
+ //       byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
+//        return Keys.hmacShaKeyFor(keyBytes);
+ //   }
+
+    @PostConstruct
+    protected void initSecretKey() {
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
+
 
     public UsernamePasswordAuthenticationToken getAuthentication(String jwtUsername) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUsername);
@@ -55,13 +60,16 @@ public class JwtTokenProvider {
         return Jwts.builder().setClaims(claims)
                 .setIssuedAt(currentTime)
                 .setExpiration(validityTime)
-                .signWith(decodeSecretKey(), SignatureAlgorithm.ES256)
+                .signWith(SignatureAlgorithm.ES256, secretKey)
                 .compact();
     }
 
     public String getUsername(String username) {
-        return Jwts.parserBuilder().setSigningKey(decodeSecretKey())
+       /* return Jwts.parserBuilder().setSigningKey(secretKey)
                 .build().parseClaimsJws(username)
+                .getBody().getSubject(); */
+        return Jwts.parser().setSigningKey(secretKey)
+                .parseClaimsJws(username)
                 .getBody().getSubject();
     }
 
@@ -76,8 +84,11 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken){
         try {
             Jwt<JwsHeader, Claims> claims =
-                    Jwts.parserBuilder().setSigningKey(decodeSecretKey())
+                  /*  Jwts.parserBuilder().setSigningKey(decodeSecretKey())
                                         .build().parseClaimsJws(jwtToken);
+                   */
+                    Jwts.parser().setSigningKey(secretKey)
+                            .parseClaimsJws(jwtToken);
             if(claims.getBody().getExpiration().before(new Date())){
                 return false;
             }
