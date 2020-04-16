@@ -42,7 +42,6 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-
     public UsernamePasswordAuthenticationToken getAuthentication(String jwtUsername) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(jwtUsername);
 
@@ -65,7 +64,7 @@ public class JwtTokenProvider {
     }
 
     public String getUsername(String username) {
-       /* return Jwts.parserBuilder().setSigningKey(secretKey)
+       /* return Jwts.parserBuilder().setSigningKey(decodeSecretKey())
                 .build().parseClaimsJws(username)
                 .getBody().getSubject(); */
         return Jwts.parser().setSigningKey(secretKey)
