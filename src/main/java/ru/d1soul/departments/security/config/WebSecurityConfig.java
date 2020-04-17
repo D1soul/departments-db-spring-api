@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -49,25 +50,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/auth/login", "/signup");
+    }
+
+    @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtTokenProvider);
-        httpSecurity.csrf().disable()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and().exceptionHandling()
-                    .authenticationEntryPoint(unauthorizedEntryPoint())
-                    .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.csrf().disable();
+                //    .sessionManagement()
+                  //  .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                 //   .and().exceptionHandling()
+                 //   .authenticationEntryPoint(unauthorizedEntryPoint())
+                   // .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeRequests()
-                    .anyRequest().permitAll()
-                    //    .antMatchers("/index.html", "/", "/login", "/register", "/logout").permitAll()
-              //  .antMatchers("/users", "/users/{username}").permitAll()
-              //  .antMatchers("/departments-app/main_departments").permitAll()
+
+                       // .antMatchers("/index.html", "/", "/auth/login", "/register", "/logout").permitAll()
+                .antMatchers("/auth/login").permitAll()
+                .anyRequest().authenticated()
+                //.antMatchers("/users", "/users/{username}").permitAll()
+            //    .antMatchers("/departments-app/sub-departments").permitAll()
                        // .anyRequest().authenticated()
                         .and().formLogin()
-                     //   .loginPage("/login")
+                .loginPage("/auth/login")
+                      //  .loginPage("/login")
                         .failureUrl("/login?error=true")
-                    //    .defaultSuccessUrl("http://localhost:8080/register")
+                        .defaultSuccessUrl("http://localhost:8080/departments-app/main_departments")
                         .and().logout().logoutUrl("/logout");
     }
 

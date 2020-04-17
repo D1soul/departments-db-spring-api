@@ -12,10 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.d1soul.departments.api.service.authentification.UserService;
+import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.security.jwt.dto.JwtResponse;
 import ru.d1soul.departments.security.jwt.JwtTokenProvider;
+import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
 import java.util.List;
@@ -24,29 +26,31 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(value = "")
+@CrossOrigin(origins = "*")
+@RequestMapping(value = "/auth")
 public class UserController {
 
     private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
     public UserController(UserService userService, JwtTokenProvider jwtTokenProvider,
-                          AuthenticationManager authenticationManager) {
+                          AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsService) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
+        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody User user){
-        Authentication authentication =
+    public ResponseEntity<JwtResponse> login(@RequestBody AuthUser authUser){
+       // Authentication authentication =
                        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                           user.getUsername(), user.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+                                                           authUser.getUsername(), authUser.getPassword()));
+       /* SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getAuthorities();
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
@@ -54,31 +58,51 @@ public class UserController {
                                        .stream().map(GrantedAuthority::getAuthority)
                                        .collect(Collectors.toSet());
 
-        String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
-    }
 
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/jwt-response")
-    public String findJwtResponse() {
-        User user2 = userService.findByUsername("admin").get();
-        Authentication authentication =
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        user2.getUsername(), user2.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getAuthorities();
+        */
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
         Set<String> roles = userDetails.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
-
         String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-
-
-        return token;
+        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
     }
 
+
+    /*
+     Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    String jwt = jwtProvider.generateJwtToken(authentication);
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+
+        try {
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getUserpwd()));
+		} catch (DisabledException e) {
+			throw new DisabledUserException("User Inactive");
+		} catch (BadCredentialsException e) {
+			throw new InvalidUserCredentialsException("Invalid Credentials");
+		}
+		UserDetails userDetails = userAuthService.loadUserByUsername(jwtRequest.getUsername());
+		String username = userDetails.getUsername();
+		String userpwd = userDetails.getPassword();
+		Set<String> roles = userDetails.getAuthorities().stream().map(r -> r.getAuthority())
+				.collect(Collectors.toSet());
+		UserVo user = new UserVo();
+		user.setUsername(username);
+		user.setUserpwd(userpwd);
+		user.setRoles(roles);
+		String token = jwtUtil.generateToken(user);
+
+
+
+     */
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users")

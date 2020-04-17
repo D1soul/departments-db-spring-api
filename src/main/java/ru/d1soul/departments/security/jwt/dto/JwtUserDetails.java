@@ -1,5 +1,6 @@
 package ru.d1soul.departments.security.jwt.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,9 +12,7 @@ import ru.d1soul.departments.model.Role;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
 public class JwtUserDetails implements UserDetails {
 
     private User user;
@@ -27,12 +26,10 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(role ->
-            new SimpleGrantedAuthority(role.getRole())).collect(Collectors.toList());
+        return authorities;
     }
 
     public static JwtUserDetails createUser(User user) {
-        Set<GrantedAuthority> authorities = getAuthoritiesSet(user.getRoles());
 
         return new JwtUserDetails(
                 user.getId(),
@@ -41,7 +38,7 @@ public class JwtUserDetails implements UserDetails {
                 user.getConfirmPassword(),
                 user.getBirthDate(),
                 user.getGender(),
-                authorities
+                getAuthoritiesSet(new HashSet<>(user.getRoles()))
         );
     }
 
