@@ -57,12 +57,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtTokenProvider);
-        httpSecurity.csrf().disable();
-                //    .sessionManagement()
-                  //  .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                 //   .and().exceptionHandling()
-                 //   .authenticationEntryPoint(unauthorizedEntryPoint())
-                   // .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.csrf().disable()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and().exceptionHandling()
+                    .authenticationEntryPoint(unauthorizedEntryPoint())
+                    .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.authorizeRequests()
 

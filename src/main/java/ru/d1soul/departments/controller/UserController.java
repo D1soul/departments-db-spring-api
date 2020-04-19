@@ -47,62 +47,16 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody AuthUser authUser){
-       // Authentication authentication =
-                       authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                           authUser.getUsername(), authUser.getPassword()));
-       /* SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getAuthorities();
-        String username = userDetails.getUsername();
-        String password = userDetails.getPassword();
-        Set<String> roles = userDetails.getAuthorities()
-                                       .stream().map(GrantedAuthority::getAuthority)
-                                       .collect(Collectors.toSet());
-
-
-        */
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                                                             authUser.getUsername(),
+                                                             authUser.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
-        Set<String> roles = userDetails.getAuthorities()
-                .stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toSet());
+        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
         return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
     }
-
-
-    /*
-     Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    String jwt = jwtProvider.generateJwtToken(authentication);
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-
-        try {
-			authenticationManager.authenticate(
-					new UsernamePasswordAuthenticationToken(jwtRequest.getUsername(), jwtRequest.getUserpwd()));
-		} catch (DisabledException e) {
-			throw new DisabledUserException("User Inactive");
-		} catch (BadCredentialsException e) {
-			throw new InvalidUserCredentialsException("Invalid Credentials");
-		}
-		UserDetails userDetails = userAuthService.loadUserByUsername(jwtRequest.getUsername());
-		String username = userDetails.getUsername();
-		String userpwd = userDetails.getPassword();
-		Set<String> roles = userDetails.getAuthorities().stream().map(r -> r.getAuthority())
-				.collect(Collectors.toSet());
-		UserVo user = new UserVo();
-		user.setUsername(username);
-		user.setUserpwd(userpwd);
-		user.setRoles(roles);
-		String token = jwtUtil.generateToken(user);
-
-
-
-     */
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users")
