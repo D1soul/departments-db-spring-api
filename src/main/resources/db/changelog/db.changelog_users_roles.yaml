@@ -13,3 +13,12 @@ databaseChangeLog:
               - column:
                   name: roles_id
                   value: 1
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 1
+              - column:
+                  name: roles_id
+                  value: 2

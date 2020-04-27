@@ -51,13 +51,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/auth/login", "/signup");
+        web.ignoring().antMatchers("/auth/login", "auth/registration", "auth/users");
     }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtTokenProvider);
-        httpSecurity.csrf().disable()
+        httpSecurity.cors().and().csrf().disable()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and().exceptionHandling()
@@ -66,18 +66,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity.authorizeRequests()
 
-                       // .antMatchers("/index.html", "/", "/auth/login", "/register", "/logout").permitAll()
-                .antMatchers("/auth/login").permitAll()
-                .anyRequest().authenticated()
-                //.antMatchers("/users", "/users/{username}").permitAll()
-            //    .antMatchers("/departments-app/sub-departments").permitAll()
-                       // .anyRequest().authenticated()
-                        .and().formLogin()
-                .loginPage("/auth/login")
-                      //  .loginPage("/login")
-                        .failureUrl("/login?error=true")
-                        .defaultSuccessUrl("http://localhost:8080/departments-app/main_departments")
-                        .and().logout().logoutUrl("/logout");
+                    .antMatchers("/auth/login", "auth/registration", "auth/users").permitAll()
+                    .anyRequest().authenticated()
+                    .and().formLogin()
+                    .loginPage("/auth/login")
+                    .failureUrl("/login?error=true")
+                    .and().logout().logoutUrl("/logout");
     }
 
     @Bean
@@ -85,20 +79,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                 "Unauthorized");
     }
-
-
-
-/*
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().disable().csrf().disable().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-                .antMatchers("/api/auth/login").permitAll().antMatchers("/api/auth/register").permitAll()
-                .antMatchers("/api/products/**").hasAuthority("ADMIN").anyRequest().authenticated().and().csrf()
-                .disable().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint()).and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
-        http.cors();
-    }
- */
-
 }

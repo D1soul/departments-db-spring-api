@@ -31,12 +31,6 @@ public class JwtTokenProvider {
     @Value("${jwt.validityPeriod}")
     private long validityPeriod;
 
-   // @PostConstruct
-  /*  private Key decodeSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    } */
-
     @PostConstruct
     protected void initSecretKey() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -59,15 +53,11 @@ public class JwtTokenProvider {
         return Jwts.builder().setClaims(claims)
                 .setIssuedAt(currentTime)
                 .setExpiration(validityTime)
-             //   .signWith(decodeSecretKey(), SignatureAlgorithm.HS256)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
     public String getUsername(String username) {
-       /* return Jwts.parserBuilder().setSigningKey(decodeSecretKey())
-                .build().parseClaimsJws(username)
-                .getBody().getSubject(); */
         return Jwts.parser().setSigningKey(secretKey)
                 .parseClaimsJws(username)
                 .getBody().getSubject();
@@ -84,9 +74,6 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken){
         try {
             Jwt<JwsHeader, Claims> claims =
-                 /*   Jwts.parserBuilder().setSigningKey(decodeSecretKey())
-                                        .build().parseClaimsJws(jwtToken); */
-
                     Jwts.parser().setSigningKey(secretKey)
                             .parseClaimsJws(jwtToken);
             if(claims.getBody().getExpiration().before(new Date())){

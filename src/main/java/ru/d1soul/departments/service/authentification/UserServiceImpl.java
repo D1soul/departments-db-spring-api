@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         user.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
         user.setBirthDate(user.getBirthDate());
         user.setGender(user.getGender());
-        Role role = roleService.findByRole("user");
+        Role role = roleService.findByRole();
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
