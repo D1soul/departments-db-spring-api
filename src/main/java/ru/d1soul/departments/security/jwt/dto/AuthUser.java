@@ -9,4 +9,6 @@ import lombok.*;
 public class AuthUser {
     private String username;
     private String password;
+    private String newPassword;
+    private String newConfirmPassword;
 }

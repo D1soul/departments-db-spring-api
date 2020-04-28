@@ -20,14 +20,12 @@ public class UserServiceImpl implements UserService {
 @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserRepository userRepository;
-    private RoleService roleService;
 
     @Autowired
     public UserServiceImpl(//BCryptPasswordEncoder bCryptPasswordEncoder,
                            UserRepository userRepository, RoleService roleService) {
       //  this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
-        this.roleService = roleService;
     }
 
     @Override
@@ -48,10 +46,7 @@ public class UserServiceImpl implements UserService {
         user.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
         user.setBirthDate(user.getBirthDate());
         user.setGender(user.getGender());
-        Role role = roleService.findByRole();
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
+        user.setRoles(user.getRoles());
         return userRepository.save(user);
     }
 

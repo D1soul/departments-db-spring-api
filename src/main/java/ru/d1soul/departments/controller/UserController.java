@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.d1soul.departments.api.service.authentification.UserService;
+import ru.d1soul.departments.model.Role;
 import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
@@ -20,6 +21,7 @@ import ru.d1soul.departments.security.jwt.JwtTokenProvider;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -88,20 +90,44 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/change-users-password")
+    public User changePassword(@RequestBody AuthUser authUser){
+       return userService.findByUsername(authUser.getUsername()).map(changePasswordUser -> {
+           changePasswordUser.setPassword(authUser.getNewPassword());
+           changePasswordUser.setConfirmPassword(authUser.getNewConfirmPassword());
+           return userService.save(changePasswordUser);
+       }).get();
+    }
+
+    /*
+      @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody AuthUser authUser){
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                                                             authUser.getUsername(),
+                                                             authUser.getPassword()));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
+        String username = userDetails.getUsername();
+        String password = userDetails.getPassword();
+        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
+        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
+    }
+     */
+
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{username}")
     public User updateUser(@PathVariable  String username,
                            @Valid @RequestBody User user){
 
-       return userService.findByUsername(username).map(newUser -> {
-           newUser.setUsername(user.getUsername());
-           newUser.setPassword(user.getPassword());
-           newUser.setConfirmPassword(user.getConfirmPassword());
-           newUser.setBirthDate(user.getBirthDate());
-           newUser.setGender(user.getGender());
-           newUser.setRoles(user.getRoles());
-           return userService.save(newUser);
-       }).get();
+        return userService.findByUsername(username).map(newUser -> {
+            newUser.setUsername(user.getUsername());
+            newUser.setBirthDate(user.getBirthDate());
+            newUser.setGender(user.getGender());
+            newUser.setRoles(user.getRoles());
+            return userService.save(newUser);
+        }).get();
     }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value =  "/users/{username}")
