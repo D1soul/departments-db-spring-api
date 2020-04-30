@@ -9,12 +9,12 @@ databaseChangeLog:
             columns:
               - column:
                   name: role
-                  value: "user"
+                  value: "User"
 
         - insert:
             tableName: roles
             columns:
               - column:
                   name: role
-                  value: "admin"
+                  value: "Admin"
 

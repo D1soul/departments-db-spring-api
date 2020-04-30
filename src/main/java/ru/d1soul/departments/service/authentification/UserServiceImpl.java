@@ -1,5 +1,6 @@
 package ru.d1soul.departments.service.authentification;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -49,6 +51,25 @@ public class UserServiceImpl implements UserService {
         user.setRoles(user.getRoles());
         return userRepository.save(user);
     }
+
+    @Override
+    public User changePassword(String username,
+                               String oldPassword,
+                               String newPassword,
+                               String newConfirmPassword ){
+       return userRepository.findByUsername(username).map(user -> {
+           if ( bCryptPasswordEncoder.matches(oldPassword, user.getPassword())){
+               user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+               user.setConfirmPassword(bCryptPasswordEncoder.encode(newConfirmPassword));
+               log.info("равны!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+              return userRepository.save(user);
+           } else {
+               log.info("не равны!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+               return null;
+           }
+       }).get();
+    }
+
 
     @Override
     public void deleteByUsername(String username) {

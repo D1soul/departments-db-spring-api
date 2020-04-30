@@ -3,9 +3,9 @@ package ru.d1soul.departments.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
+@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+public class BadFormException extends RuntimeException {
+    public BadFormException(String message) {
         super(message);
     }
 }

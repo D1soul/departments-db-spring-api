@@ -4,24 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.Role;
 import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.security.jwt.dto.JwtResponse;
 import ru.d1soul.departments.security.jwt.JwtTokenProvider;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
+import ru.d1soul.departments.web.BadFormException;
 import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -58,7 +54,7 @@ public class UserController {
         String password = userDetails.getPassword();
         Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
+        return new ResponseEntity<>(new JwtResponse(username, roles, token), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -82,37 +78,33 @@ public class UserController {
     public void registerUser (@Valid @RequestBody User user) {
         Optional<User> newUser = userService.findByUsername(user.getUsername());
         if (newUser.isEmpty()){
-              userService.save(user);
+            if (user.getPassword().equals(user.getConfirmPassword())) {
+                userService.save(user);
+            }
+            else {
+                throw new BadFormException("Password and confirmPassword not matches!");
+            }
         }
         else {
-            throw new BadCredentialsException("User with username: " + newUser.get().getUsername() + " already exists");
+            throw new BadFormException("User with username: " + newUser.get().getUsername() + " already exists");
         }
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = "/change-users-password")
+    @PutMapping(value = "/changing-password")
     public User changePassword(@RequestBody AuthUser authUser){
-       return userService.findByUsername(authUser.getUsername()).map(changePasswordUser -> {
-           changePasswordUser.setPassword(authUser.getNewPassword());
-           changePasswordUser.setConfirmPassword(authUser.getNewConfirmPassword());
-           return userService.save(changePasswordUser);
-       }).get();
+        String username = authUser.getUsername();
+        String oldPassword = authUser.getPassword();
+        String newPassword = authUser.getNewPassword();
+        String newConfirmPassword = authUser.getNewConfirmPassword();
+        if (newPassword.equals(newConfirmPassword)){
+            return userService.changePassword(username, oldPassword, newPassword, newConfirmPassword);
+        }
+        else {
+            throw new BadFormException("New password and confirmPassword not matches!");
+        }
     }
 
-    /*
-      @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody AuthUser authUser){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                             authUser.getUsername(),
-                                                             authUser.getPassword()));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
-        String username = userDetails.getUsername();
-        String password = userDetails.getPassword();
-        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-        String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-        return new ResponseEntity<>(new JwtResponse(username, token), HttpStatus.OK);
-    }
-     */
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{username}")

@@ -13,6 +13,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
 
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
@@ -28,11 +30,6 @@ spring:
     default-property-inclusion: non_null
     serialization:
        indent-output: true
-  security:
-    user:
-      name: "admin"
-      password: "admin"
-      roles: "role_admin"
 
 logging:
   level:

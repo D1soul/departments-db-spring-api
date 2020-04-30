@@ -10,5 +10,6 @@ public interface UserService {
    Optional<User> findByUsername(String username);
    User save(User user);
    void deleteByUsername(String username);
+   User changePassword(String username, String oldPassword, String newPassword, String newConfirmPassword);
 }
 
