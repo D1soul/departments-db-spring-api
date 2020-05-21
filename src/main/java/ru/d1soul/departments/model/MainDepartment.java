@@ -24,7 +24,7 @@ public class MainDepartment implements Serializable {
     @NonNull
     @NotNull
     @Size(min = 7, max = 60)
-    @Pattern(regexp = "^(([А-я]+\\s?)+|([A-z]+\\s?)+)$")
+    @Pattern(regexp = "^(([А-яЁё]+\\s?)+|([A-z]+\\s?)+)$")
     @Column(name = "name")
     private String name;
 

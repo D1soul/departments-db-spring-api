@@ -28,19 +28,19 @@ public class MainDeptEmployee implements Serializable {
 
     @NotNull
     @Size(min = 2, max = 20)
-    @Pattern(regexp = "^([А-я]+|[A-z]+)$")
+    @Pattern(regexp = "^([А-яЁё]+|[A-z]+)$")
     @Column(name = "last_name")
     private String lastName;
 
     @NotNull
     @Size(min = 2, max = 20)
-    @Pattern(regexp = "^([А-я]+|[A-z]+)$")
+    @Pattern(regexp = "^([А-яЁё]+|[A-z]+)$")
     @Column(name = "first_name")
     private String firstName;
 
     @NotNull
     @Size(min = 1, max = 25)
-    @Pattern(regexp = "^(([А-я]+|[A-z]+)|(-))$")
+    @Pattern(regexp = "^(([А-яЁё]+|[A-z]+)|(-))$")
     @Column(name = "middle_name")
     private String middleName;
 

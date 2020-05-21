@@ -2,15 +2,14 @@ package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.model.MainDeptEmployee;
 import ru.d1soul.departments.api.service.department.MainDeptEmployeesService;
+import ru.d1soul.departments.web.BadFormException;
 import ru.d1soul.departments.web.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -34,15 +33,13 @@ public class MainDeptEmployeesController {
     @GetMapping(value = "/main_dept_employees/"
             + "{lastName}/{firstName}/{middleName}")
     public MainDeptEmployee findMainDeptEmplByFullName(
-            @PathVariable String lastName,
-            @PathVariable String firstName,
-            @PathVariable String middleName) {
-        Optional<MainDeptEmployee> mainEmployee = mainDeptEmployeesService.findByFullName(lastName, firstName, middleName);
-        if (mainEmployee.isPresent()) {
-            return mainEmployee.get();
-        }
-        else throw new NotFoundException("Main Employee with Full Name: "
-                + lastName + " " + firstName + " " + middleName + " Not Found!");
+                           @PathVariable String lastName,
+                           @PathVariable String firstName,
+                           @PathVariable String middleName) {
+       return mainDeptEmployeesService.findByFullName(lastName, firstName, middleName).orElseThrow(()-> {
+           throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                   + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+       });
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -53,7 +50,7 @@ public class MainDeptEmployeesController {
             @PathVariable  String firstName,
             @PathVariable  String middleName,
             @Valid @RequestBody MainDeptEmployee updateMainEmpl){
-        return mainDeptEmployeesService.findByFullName(lastName,firstName, middleName).map(mainDeptEmployee -> {
+        return mainDeptEmployeesService.findByFullName(lastName, firstName, middleName).map(mainDeptEmployee -> {
             mainDeptEmployee.setFirstName(updateMainEmpl.getFirstName());
             mainDeptEmployee.setMiddleName(updateMainEmpl.getMiddleName());
             mainDeptEmployee.setLastName(updateMainEmpl.getLastName());
@@ -61,14 +58,25 @@ public class MainDeptEmployeesController {
             mainDeptEmployee.setPassport(updateMainEmpl.getPassport());
             mainDeptEmployee.setMainDepartment(updateMainEmpl.getMainDepartment());
             return mainDeptEmployeesService.save(mainDeptEmployee);
-        }).get();
+        }).orElseThrow(()-> {
+            throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                 + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+        });
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/main_dept_employees")
     public MainDeptEmployee createMainDeptEmpl(@Valid @RequestBody MainDeptEmployee mainDeptEmployee) {
-        return  mainDeptEmployeesService.save(mainDeptEmployee);
+        if (mainDeptEmployeesService.findByFullName(mainDeptEmployee.getLastName(),
+                mainDeptEmployee.getFirstName(), mainDeptEmployee.getMiddleName()).isEmpty()) {
+            return mainDeptEmployeesService.save(mainDeptEmployee);
+        }
+        else throw new BadFormException("Сотрудник с Ф.И.О. : "
+                + mainDeptEmployee.getLastName() + " "
+                + mainDeptEmployee.getFirstName()  + " "
+                + mainDeptEmployee.getMiddleName() + " уже существует");
     }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/main_dept_employees/"

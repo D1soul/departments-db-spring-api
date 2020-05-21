@@ -1,7 +1,9 @@
 package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.api.service.department.SubDepartmentService;
+import ru.d1soul.departments.model.MainDepartment;
 import ru.d1soul.departments.model.SubDepartment;
+import ru.d1soul.departments.web.BadFormException;
 import ru.d1soul.departments.web.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -33,17 +35,19 @@ public class SubDepartmentController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/sub-departments/{name}")
     public SubDepartment findSubDeptByName(@PathVariable String name) {
-        Optional<SubDepartment> subDepartment = subDepartmentService.findByName(name);
-        if (subDepartment.isPresent()) {
-            return subDepartment.get();
-        }
-        else throw new NotFoundException("Sub-Department with Name: " + name + " Not Found!");
+        return subDepartmentService.findByName(name).orElseThrow(()->{
+           throw new NotFoundException("Подотдел с названием: " + name + " не обнаружен!");
+        });
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/sub-departments")
     public SubDepartment createSubDept(@Valid @RequestBody SubDepartment subDepartment) {
-        return  subDepartmentService.save(subDepartment);
+        if (subDepartmentService.findByName(subDepartment.getName()).isEmpty()) {
+            return subDepartmentService.save(subDepartment);
+        }
+        else throw new BadFormException("Подотдел с названием: "
+                + subDepartment.getName() + " уже существует");
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -55,7 +59,9 @@ public class SubDepartmentController {
             subDep.setName(updateSubDep.getName());
             subDep.setMainDepartment(updateSubDep.getMainDepartment());
             return subDepartmentService.save(subDep);
-        }).get();
+        }).orElseThrow(()->{
+            throw new NotFoundException("Подотдел с названием: " + name + " не обнаружен!");
+        });
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

@@ -10,6 +10,8 @@ import ru.d1soul.departments.api.service.authentification.RoleService;
 import ru.d1soul.departments.api.service.authentification.UserService;
 import ru.d1soul.departments.model.Role;
 import ru.d1soul.departments.model.User;
+import ru.d1soul.departments.web.BadFormException;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -61,11 +63,9 @@ public class UserServiceImpl implements UserService {
            if ( bCryptPasswordEncoder.matches(oldPassword, user.getPassword())){
                user.setPassword(bCryptPasswordEncoder.encode(newPassword));
                user.setConfirmPassword(bCryptPasswordEncoder.encode(newConfirmPassword));
-               log.info("равны!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
               return userRepository.save(user);
            } else {
-               log.info("не равны!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-               return null;
+               throw new BadFormException("Пароль не совпадает!");
            }
        }).get();
     }

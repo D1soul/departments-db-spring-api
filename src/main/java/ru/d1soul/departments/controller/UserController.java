@@ -19,12 +19,10 @@ import ru.d1soul.departments.web.BadFormException;
 import ru.d1soul.departments.web.NotFoundException;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-//@CrossOrigin(origins = "*")
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping(value = "/auth")
 public class UserController {
@@ -66,28 +64,21 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/users/{username}")
     public User findUserByUsername(@PathVariable String username){
-        Optional<User> user = userService.findByUsername(username);
-        if(user.isPresent()) {
-            return user.get();
-        }
-        else throw new NotFoundException("User with Username: " + username + " Not Found!");
+        return userService.findByUsername(username).orElseThrow(()-> {
+            throw new NotFoundException("Пользователь с именем: " + username + " не обнаружен!");
+        });
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/registration")
     public void registerUser (@Valid @RequestBody User user) {
-        Optional<User> newUser = userService.findByUsername(user.getUsername());
-        if (newUser.isEmpty()){
+        if (userService.findByUsername(user.getUsername()).isEmpty()){
             if (user.getPassword().equals(user.getConfirmPassword())) {
                 userService.save(user);
             }
-            else {
-                throw new BadFormException("Password and confirmPassword not matches!");
-            }
+            else throw new BadFormException("Пароль и проверочный пароль не совпадают!");
         }
-        else {
-            throw new BadFormException("User with username: " + newUser.get().getUsername() + " already exists");
-        }
+        else throw new BadFormException("Пользователь с именем: " + user.getUsername() + " уже существует");
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -101,25 +92,24 @@ public class UserController {
             return userService.changePassword(username, oldPassword, newPassword, newConfirmPassword);
         }
         else {
-            throw new BadFormException("New password and confirmPassword not matches!");
+            throw new BadFormException("Новый пароль и проверочный пароль не совпадают!");
         }
     }
-
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/users/{username}")
     public User updateUser(@PathVariable  String username,
                            @Valid @RequestBody User user){
-
         return userService.findByUsername(username).map(newUser -> {
             newUser.setUsername(user.getUsername());
             newUser.setBirthDate(user.getBirthDate());
             newUser.setGender(user.getGender());
             newUser.setRoles(user.getRoles());
             return userService.save(newUser);
-        }).get();
+        }).orElseThrow(()->{
+            throw new NotFoundException("Пользователь с именем: " + username + " не обнаружен!");
+        });
     }
-
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value =  "/users/{username}")

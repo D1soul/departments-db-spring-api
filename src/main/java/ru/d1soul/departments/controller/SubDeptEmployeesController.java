@@ -2,15 +2,14 @@ package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.api.service.department.SubDeptEmployeesService;
 import ru.d1soul.departments.model.SubDeptEmployee;
+import ru.d1soul.departments.web.BadFormException;
 import ru.d1soul.departments.web.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -37,17 +36,23 @@ public class SubDeptEmployeesController {
             @PathVariable String lastName,
             @PathVariable String firstName,
             @PathVariable String middleName){
-        Optional<SubDeptEmployee> subEmployee = subDeptEmployeesService.findByFullName(lastName, firstName, middleName);
-        if (subEmployee.isPresent()) {
-            return subEmployee.get();
-        } else throw new NotFoundException("Employee with Full Name: "
-                + lastName + " " + firstName + " " + middleName + " Not Found!");
+       return subDeptEmployeesService.findByFullName(lastName, firstName, middleName).orElseThrow(()-> {
+           throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                   + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+       });
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/sub-dept_employees")
     public SubDeptEmployee createSubDeptEmpl(@Valid @RequestBody SubDeptEmployee subDeptEmployee) {
-        return  subDeptEmployeesService.save(subDeptEmployee);
+        if (subDeptEmployeesService.findByFullName(subDeptEmployee.getLastName(),
+                subDeptEmployee.getFirstName(), subDeptEmployee.getMiddleName()).isEmpty()) {
+            return subDeptEmployeesService.save(subDeptEmployee);
+        }
+        else throw new BadFormException("Сотрудник с Ф.И.О. : "
+                + subDeptEmployee.getLastName() + " "
+                + subDeptEmployee.getFirstName()  + " "
+                + subDeptEmployee.getMiddleName() + " уже существует");
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -66,7 +71,10 @@ public class SubDeptEmployeesController {
             subEmpl.setPassport(updateSubEmpl.getPassport());
             subEmpl.setSubDepartment(updateSubEmpl.getSubDepartment());
             return subDeptEmployeesService.save(subEmpl);
-        }).get();
+        }).orElseThrow( ()-> {
+            throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                    + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+        });
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
