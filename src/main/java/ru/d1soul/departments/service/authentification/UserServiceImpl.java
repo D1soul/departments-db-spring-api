@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
                user.setConfirmPassword(bCryptPasswordEncoder.encode(newConfirmPassword));
               return userRepository.save(user);
            } else {
-               throw new BadFormException("Пароль не совпадает!");
+               throw new BadFormException("Старый пароль введён неверно!");
            }
        }).get();
     }
