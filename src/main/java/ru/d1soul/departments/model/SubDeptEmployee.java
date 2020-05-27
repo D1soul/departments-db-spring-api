@@ -1,8 +1,8 @@
 package ru.d1soul.departments.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ru.d1soul.departments.web.SubDepartmentDeserializer;
-import ru.d1soul.departments.web.SubDepartmentSerializer;
+import ru.d1soul.departments.web.deserializer.SubDepartmentDeserializer;
+import ru.d1soul.departments.web.serializer.SubDepartmentSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,19 +29,16 @@ public class SubDeptEmployee implements Serializable {
     private Long id;
 
     @NotNull
-    @Size(min = 2, max = 20)
     @Pattern(regexp = "^([А-яЁё]+|[A-z]+)$")
     @Column(name = "last_name")
     private String lastName;
 
     @NotNull
-    @Size(min = 2, max = 20)
     @Pattern(regexp = "^([А-яЁё]+|[A-z]+)$")
     @Column(name = "first_name")
     private String firstName;
 
     @NotNull
-    @Size(min = 1, max = 25)
     @Pattern(regexp = "^(([А-яЁё]+|[A-z]+)|(-))$")
     @Column(name = "middle_name")
     private String middleName;

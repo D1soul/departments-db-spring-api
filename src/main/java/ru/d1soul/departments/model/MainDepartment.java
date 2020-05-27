@@ -4,7 +4,6 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -23,8 +22,7 @@ public class MainDepartment implements Serializable {
 
     @NonNull
     @NotNull
-    @Size(min = 7, max = 60)
-    @Pattern(regexp = "^(([А-яЁё]+\\s?)+|([A-z]+\\s?)+)$")
+    @Pattern(regexp = "^(([А-яЁё]\\s?)+|([A-z]\\s?)+)$")
     @Column(name = "name")
     private String name;
 

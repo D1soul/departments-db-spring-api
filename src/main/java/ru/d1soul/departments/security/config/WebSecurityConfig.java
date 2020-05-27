@@ -7,14 +7,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.d1soul.departments.security.jwt.JwtAuthenticationFilter;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import ru.d1soul.departments.security.jwt.JwtTokenProvider;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import javax.servlet.http.HttpServletResponse;
@@ -50,33 +48,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/auth/login", "auth/registration", "auth/users", "auth/changing-password");
-    }
-
-    @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtTokenProvider);
         httpSecurity.cors().and().csrf().disable()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and().exceptionHandling()
-                    .authenticationEntryPoint(unauthorizedEntryPoint())
-                    .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                    .and().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint())
+                    .accessDeniedHandler(accessDeniedHandler())
+                    .and().apply(new JwtConfigurer(jwtTokenProvider));
 
         httpSecurity.authorizeRequests()
-
-                    .antMatchers("/auth/login", "auth/registration", "auth/users").permitAll()
-                    .anyRequest().authenticated()
-                    .and().formLogin()
-                    .loginPage("/auth/login")
-                    .failureUrl("/login?error=true")
-                    .and().logout().logoutUrl("/logout");
+                    .antMatchers("/auth/login", "/auth/registration", "/auth/users").permitAll()
+                    .anyRequest().authenticated();
     }
 
     @Bean
     public AuthenticationEntryPoint unauthorizedEntryPoint() {
         return (request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                "Unauthorized");
+                "Пользователь не авторизован!");
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler(){
+        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                "Доступ закрыт!");
     }
 }

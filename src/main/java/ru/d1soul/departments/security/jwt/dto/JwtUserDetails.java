@@ -1,16 +1,12 @@
 package ru.d1soul.departments.security.jwt.dto;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.model.Role;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 public class JwtUserDetails implements UserDetails {

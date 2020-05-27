@@ -1,18 +1,16 @@
-package ru.d1soul.departments.web;
+package ru.d1soul.departments.web.deserializer;
 
 import ru.d1soul.departments.api.service.department.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 public class MainDepartmentDeserializer extends JsonDeserializer<MainDepartment> {
 
     private MainDepartmentService mainDepartmentService;
 
-    @Autowired
     public MainDepartmentDeserializer(MainDepartmentService mainDepartmentService){
         this.mainDepartmentService = mainDepartmentService;
     }
@@ -22,8 +20,6 @@ public class MainDepartmentDeserializer extends JsonDeserializer<MainDepartment>
 
         String name = jsonParser.getValueAsString();
 
-        MainDepartment mainDepartment = mainDepartmentService.findByName(name).get();
-
-        return mainDepartment;
+        return mainDepartmentService.findByName(name).orElseThrow();
     }
 }

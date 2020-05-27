@@ -1,4 +1,4 @@
-package ru.d1soul.departments.web;
+package ru.d1soul.departments.web.serializer;
 
 import ru.d1soul.departments.model.MainDepartment;
 import com.fasterxml.jackson.core.JsonGenerator;

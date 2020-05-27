@@ -1,18 +1,15 @@
 package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.api.service.department.SubDepartmentService;
-import ru.d1soul.departments.model.MainDepartment;
 import ru.d1soul.departments.model.SubDepartment;
-import ru.d1soul.departments.web.BadFormException;
-import ru.d1soul.departments.web.NotFoundException;
+import ru.d1soul.departments.web.exception.BadFormException;
+import ru.d1soul.departments.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")

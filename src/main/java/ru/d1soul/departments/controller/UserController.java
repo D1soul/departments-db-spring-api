@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,9 +15,11 @@ import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.security.jwt.dto.JwtResponse;
 import ru.d1soul.departments.security.jwt.JwtTokenProvider;
+import ru.d1soul.departments.security.jwt.dto.PasswordChangingUser;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
-import ru.d1soul.departments.web.BadFormException;
-import ru.d1soul.departments.web.NotFoundException;
+import ru.d1soul.departments.web.exception.BadFormException;
+import ru.d1soul.departments.web.exception.NotFoundException;
+import ru.d1soul.departments.web.exception.UnauthorizedException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
@@ -42,17 +45,22 @@ public class UserController {
         this.userDetailsService = userDetailsService;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody AuthUser authUser){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                                                             authUser.getUsername(),
-                                                             authUser.getPassword()));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
-        String username = userDetails.getUsername();
-        String password = userDetails.getPassword();
-        Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-        String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
-        return new ResponseEntity<>(new JwtResponse(username, roles, token), HttpStatus.OK);
+        try {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authUser.getUsername(), authUser.getPassword()));
+            String username = userDetails.getUsername();
+            String password = userDetails.getPassword();
+            Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+            String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
+            return new ResponseEntity<>(new JwtResponse(username, roles, token), HttpStatus.OK);
+        }
+        catch (BadCredentialsException  e){
+            throw new UnauthorizedException("Неверно указан пароль!");
+        }
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -83,11 +91,11 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/changing-password")
-    public User changePassword(@RequestBody AuthUser authUser){
-        String username = authUser.getUsername();
-        String oldPassword = authUser.getPassword();
-        String newPassword = authUser.getNewPassword();
-        String newConfirmPassword = authUser.getNewConfirmPassword();
+    public User changePassword(@RequestBody PasswordChangingUser user){
+        String username = user.getUsername();
+        String oldPassword = user.getPassword();
+        String newPassword = user.getNewPassword();
+        String newConfirmPassword = user.getNewConfirmPassword();
         if (newPassword.equals(newConfirmPassword)){
             return userService.changePassword(username, oldPassword, newPassword, newConfirmPassword);
         }

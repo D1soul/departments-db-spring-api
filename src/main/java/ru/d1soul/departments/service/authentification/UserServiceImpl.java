@@ -6,29 +6,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.d1soul.departments.api.repository.authentification.UserRepository;
-import ru.d1soul.departments.api.service.authentification.RoleService;
 import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.Role;
 import ru.d1soul.departments.model.User;
-import ru.d1soul.departments.web.BadFormException;
-
-import java.util.HashSet;
+import ru.d1soul.departments.web.exception.BadFormException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-@Autowired
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(//BCryptPasswordEncoder bCryptPasswordEncoder,
-                           UserRepository userRepository, RoleService roleService) {
-      //  this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public UserServiceImpl(UserRepository userRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -69,7 +64,6 @@ public class UserServiceImpl implements UserService {
            }
        }).get();
     }
-
 
     @Override
     public void deleteByUsername(String username) {

@@ -1,7 +1,6 @@
 package ru.d1soul.departments.api.service.authentification;
 
 import ru.d1soul.departments.model.User;
-
 import java.util.List;
 import java.util.Optional;
 

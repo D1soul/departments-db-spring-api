@@ -5,25 +5,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.User;
+import ru.d1soul.departments.api.repository.authentification.UserRepository;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDetails;
+import ru.d1soul.departments.web.exception.BadFormException;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserService userService) {
-        this.userService = userService;
+    public UserDetailsServiceImpl(UserRepository userService) {
+        this.userRepository = userService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User Not Found with -> username or email : " + username)
-        );
-        return JwtUserDetails.createUser(user);
+        return JwtUserDetails.createUser(userRepository.findByUsername(username).orElseThrow(()-> {
+            throw new BadFormException("Пользователь с таким именем не найден!");
+        }));
     }
 }

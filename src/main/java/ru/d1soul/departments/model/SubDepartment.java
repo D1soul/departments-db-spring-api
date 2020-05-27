@@ -1,14 +1,13 @@
 package ru.d1soul.departments.model;
 
 import lombok.*;
-import ru.d1soul.departments.web.MainDepartmentDeserializer;
-import ru.d1soul.departments.web.MainDepartmentSerializer;
+import ru.d1soul.departments.web.deserializer.MainDepartmentDeserializer;
+import ru.d1soul.departments.web.serializer.MainDepartmentSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -27,8 +26,7 @@ public class SubDepartment implements Serializable {
 
     @NonNull
     @NotNull
-    @Size(min=5, max = 60)
-    @Pattern(regexp = "^(([А-яЁё]+\\s?)+|([A-z]+\\s?)+)$")
+    @Pattern(regexp = "^(([А-яЁё]\\s?)+|([A-z]\\s?)+)$")
     @Column(name = "name")
     private String name;
 

@@ -10,7 +10,6 @@ import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
@@ -71,7 +70,7 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean validateToken(String jwtToken){
+    public boolean validateToken(String jwtToken) throws JwtException {
         try {
             Jwt<JwsHeader, Claims> claims =
                     Jwts.parser().setSigningKey(secretKey)

@@ -2,9 +2,8 @@ package ru.d1soul.departments.controller;
 
 import ru.d1soul.departments.api.service.department.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
-import ru.d1soul.departments.model.User;
-import ru.d1soul.departments.web.BadFormException;
-import ru.d1soul.departments.web.NotFoundException;
+import ru.d1soul.departments.web.exception.BadFormException;
+import ru.d1soul.departments.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
