@@ -1,4 +1,5 @@
-
+#Mail wild.bill.java.man@yandex.ru
+#Password {wild.bill.java.man=1}
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/departmentsDbAngular
@@ -30,11 +31,25 @@ spring:
     default-property-inclusion: non_null
     serialization:
        indent-output: true
+  mail:
+    default-encoding: UTF-8
+    host: smtp.yandex.ru
+    username: wild.bill.java.man@yandex.ru
+    password: {wild.bill.java.man=1}
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+    test-connection: false
 
 logging:
   level:
     root: info
 
 jwt:
-  secretKey: secretKey
-  validityPeriod: 3600000
+   secretKey: secretKey
+   validityPeriod: 3600000

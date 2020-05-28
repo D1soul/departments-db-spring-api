@@ -3,13 +3,17 @@ package ru.d1soul.departments.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.api.service.authentification.UserService;
+import ru.d1soul.departments.model.PasswordResetToken;
 import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
 import ru.d1soul.departments.model.User;
@@ -20,9 +24,9 @@ import ru.d1soul.departments.service.authentification.UserDetailsServiceImpl;
 import ru.d1soul.departments.web.exception.BadFormException;
 import ru.d1soul.departments.web.exception.NotFoundException;
 import ru.d1soul.departments.web.exception.UnauthorizedException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,15 +38,18 @@ public class UserController {
     private JwtTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceImpl userDetailsService;
+    private ResetPasswordService resetPasswordService;
 
     @Autowired
-    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider,
-                          AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsService) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService,
+                          JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService,
+                          ResetPasswordService resetPasswordService) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.userDetailsService = userDetailsService;
+        this.resetPasswordService = resetPasswordService;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -54,7 +61,8 @@ public class UserController {
                     authUser.getUsername(), authUser.getPassword()));
             String username = userDetails.getUsername();
             String password = userDetails.getPassword();
-            Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+            Set<String> roles = userDetails.getAuthorities().stream().map(
+                                       GrantedAuthority::getAuthority).collect(Collectors.toSet());
             String token = jwtTokenProvider.createToken(new JwtUserDto(username, password, roles));
             return new ResponseEntity<>(new JwtResponse(username, roles, token), HttpStatus.OK);
         }
@@ -89,6 +97,45 @@ public class UserController {
         else throw new BadFormException("Пользователь с именем: " + user.getUsername() + " уже существует");
     }
 
+    @PostMapping("/user/forgotPassword")
+    public ResponseEntity<Map<String, String>> resetPassword(HttpServletRequest request,
+                               @RequestParam("email") String userEmail) {
+        User user = userService.findByEmail(userEmail).orElseThrow(()-> {
+            throw new BadFormException("Пользователь с таким е-майл не найден!");
+        });
+        String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(UUID.randomUUID().toString());
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(30);
+        resetPasswordService.save(resetToken);
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("wild.bill.java.man@yandex.ru");
+        mailMessage.setSubject("Запрос на сброс пароля");
+        mailMessage.setText("Для подтверждения смены пароля пройдите по ссылке: \n"
+                + url + "/reset-password?token=" + resetToken.getToken());
+        Map<String, String> map = new HashMap<>();
+        map.put("successMessage", "Ссылка для сброса пароля была отправлена на е-майл " + userEmail);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, String>>  displayResetPasswordPage(@RequestParam("token") String userToken) {
+
+        Map<String, String> map = new HashMap<>();
+        PasswordResetToken resetToken = resetPasswordService.findByToken(userToken).orElseThrow(()-> {
+            throw new BadFormException("Токен не обнаружен!");
+        });
+        if (resetToken.isExpired()){
+            map.put("error", "Срок действия токена истек, пожалуйста, запросите новый пароль для сброса.");
+        }
+        else {
+            map.put("token", resetToken.getToken());
+        }
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = "/changing-password")
     public User changePassword(@RequestBody PasswordChangingUser user){
@@ -110,6 +157,7 @@ public class UserController {
                            @Valid @RequestBody User user){
         return userService.findByUsername(username).map(newUser -> {
             newUser.setUsername(user.getUsername());
+            newUser.setEmail(user.getEmail());
             newUser.setBirthDate(user.getBirthDate());
             newUser.setGender(user.getGender());
             newUser.setRoles(user.getRoles());

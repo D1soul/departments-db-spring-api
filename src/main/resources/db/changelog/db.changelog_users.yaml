@@ -11,6 +11,9 @@ databaseChangeLog:
                   name: username
                   value: "admin"
               - column:
+                  name: email
+                  value: "wild.bill.java.man@yandex.ru"
+              - column:
                   name: password
                   value: "$2a$10$O9k0lg/uELXbHchLEi5sDuxrkiyhZ/3JL9DulI1ZlRSr/ixRhMWh6" #"admin"
               - column:
@@ -22,4 +25,3 @@ databaseChangeLog:
               - column:
                   name: gender
                   value: "male"
-

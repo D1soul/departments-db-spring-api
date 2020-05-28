@@ -14,6 +14,7 @@ public class JwtUserDetails implements UserDetails {
     private User user;
     private final Long id;
     private final String username;
+    private final String email;
     private final String password;
     private final String confirmPassword;
     private final Date birthDate;
@@ -30,6 +31,7 @@ public class JwtUserDetails implements UserDetails {
         return new JwtUserDetails(
                 user.getId(),
                 user.getUsername(),
+                user.getEmail(),
                 user.getPassword(),
                 user.getConfirmPassword(),
                 user.getBirthDate(),
