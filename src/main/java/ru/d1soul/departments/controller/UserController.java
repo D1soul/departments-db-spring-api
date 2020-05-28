@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.api.service.authentification.UserService;
+import ru.d1soul.departments.model.PasswordResetDto;
 import ru.d1soul.departments.model.PasswordResetToken;
 import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
@@ -97,13 +98,14 @@ public class UserController {
         else throw new BadFormException("Пользователь с именем: " + user.getUsername() + " уже существует");
     }
 
-    @PostMapping("/user/forgotPassword")
+    @PostMapping("/forgot-password")
     public ResponseEntity<Map<String, String>> resetPassword(HttpServletRequest request,
                                @RequestParam("email") String userEmail) {
         User user = userService.findByEmail(userEmail).orElseThrow(()-> {
             throw new BadFormException("Пользователь с таким е-майл не найден!");
         });
-        String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        String url = request.getScheme() + "://" + request.getServerName() + ":"
+                                            + request.getServerPort() + "/auth";
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setToken(UUID.randomUUID().toString());
         resetToken.setUser(user);
@@ -120,18 +122,40 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/reset", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, String>>  displayResetPasswordPage(@RequestParam("token") String userToken) {
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
+    public ResponseEntity<Map<String, String>> resetPasswordMessage(@RequestParam("token") String userToken) {
 
         Map<String, String> map = new HashMap<>();
         PasswordResetToken resetToken = resetPasswordService.findByToken(userToken).orElseThrow(()-> {
             throw new BadFormException("Токен не обнаружен!");
         });
         if (resetToken.isExpired()){
-            map.put("error", "Срок действия токена истек, пожалуйста, запросите новый пароль для сброса.");
+            map.put("error", "Срок действия токена истек, пожалуйста, снова запросите новый пароль.");
         }
         else {
             map.put("token", resetToken.getToken());
+        }
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping
+    public ResponseEntity<Map<String, String>> resetForgottenPassword(@Valid PasswordResetDto passwordReset) {
+        PasswordResetToken token = resetPasswordService.findByToken(passwordReset.getToken()).orElseThrow(()->{
+            throw new NotFoundException("Токен не обнаружен!");
+        });
+        Map<String, String> map = new HashMap<>();
+        User user = token.getUser();
+        if (user != null) {
+            user.setPassword(passwordReset.getPassword());
+            user.setConfirmPassword(passwordReset.getConfirmPassword());
+            userService.save(user);
+            resetPasswordService.deleteByToken(passwordReset.getToken());
+            map.put("message", "Пароль и проверочный пароль успешно изменены!");
+        }
+        else {
+            map.put("error", "Ссылка неверна или не работае! Попробуйте снова повторить сброс пароля.");
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }

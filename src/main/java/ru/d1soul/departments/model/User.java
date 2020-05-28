@@ -39,7 +39,7 @@ public class User implements Serializable {
     private String confirmPassword;
 
     @JsonFormat(pattern="dd/MMMM/yyyy")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "birth_date")
     private Date birthDate;
 
