@@ -25,12 +25,12 @@ public class PasswordResetToken implements Serializable {
     @Column(name = "token")
     private String  token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "id")
-    private User user;
-
-    @Column(nullable = false)
+    @Column(name = "expiry_date")
     private Date expiryDate;
+
+    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "users_id", referencedColumnName = "id")
+    private User user;
 
     public void setExpiryDate(int minutes){
         Calendar now = Calendar.getInstance();

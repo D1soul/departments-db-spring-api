@@ -4,16 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.api.service.authentification.UserService;
-import ru.d1soul.departments.model.PasswordResetDto;
+import ru.d1soul.departments.security.jwt.dto.PasswordResetDto;
 import ru.d1soul.departments.model.PasswordResetToken;
 import ru.d1soul.departments.security.jwt.dto.AuthUser;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDto;
@@ -40,17 +41,19 @@ public class UserController {
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceImpl userDetailsService;
     private ResetPasswordService resetPasswordService;
+    private JavaMailSender javaMailSender;
 
     @Autowired
     public UserController(AuthenticationManager authenticationManager, UserService userService,
                           JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService,
-                          ResetPasswordService resetPasswordService) {
+                          ResetPasswordService resetPasswordService, JavaMailSender javaMailSender) {
 
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.resetPasswordService = resetPasswordService;
+        this.javaMailSender = javaMailSender;
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -112,18 +115,20 @@ public class UserController {
         resetToken.setExpiryDate(30);
         resetPasswordService.save(resetToken);
         SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("wild.bill.java.man@gmail.com");
         mailMessage.setTo(user.getEmail());
-        mailMessage.setFrom("wild.bill.java.man@yandex.ru");
         mailMessage.setSubject("Запрос на сброс пароля");
         mailMessage.setText("Для подтверждения смены пароля пройдите по ссылке: \n"
                 + url + "/reset-password?token=" + resetToken.getToken());
+        javaMailSender.send(mailMessage);
         Map<String, String> map = new HashMap<>();
         map.put("successMessage", "Ссылка для сброса пароля была отправлена на е-майл " + userEmail);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @GetMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPasswordMessage(@RequestParam("token") String userToken) {
 
         Map<String, String> map = new HashMap<>();
@@ -132,6 +137,7 @@ public class UserController {
         });
         if (resetToken.isExpired()){
             map.put("error", "Срок действия токена истек, пожалуйста, снова запросите новый пароль.");
+            resetPasswordService.deleteByToken(userToken);
         }
         else {
             map.put("token", resetToken.getToken());
@@ -139,8 +145,9 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping
+    @PutMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetForgottenPassword(@Valid PasswordResetDto passwordReset) {
         PasswordResetToken token = resetPasswordService.findByToken(passwordReset.getToken()).orElseThrow(()->{
             throw new NotFoundException("Токен не обнаружен!");

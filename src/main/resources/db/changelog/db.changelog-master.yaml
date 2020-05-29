@@ -84,6 +84,36 @@ databaseChangeLog:
                     references: roles(id)
 
   - changeSet:
+      id: сreate_table_reset_password_token
+      author: postgres
+      changes:
+        - createTable:
+            tableName: password_reset_token
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: varchar(100)
+              - column:
+                  name: expiry_date
+                  type: date
+              - column:
+                  name: users_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKey: (users_id)
+                    foreignKeyName: FK_Users_Id
+                    references: users(id)
+
+
+  - changeSet:
       id: сreate_table_Main_Departments
       author: postgres
       changes:
@@ -218,6 +248,8 @@ databaseChangeLog:
             tableName: roles
         - dropTable:
             tableName: users_roles
+        - dropTable:
+            tableName: password_reset_token
 
   - include:
       file: db.changelog_users.yaml
