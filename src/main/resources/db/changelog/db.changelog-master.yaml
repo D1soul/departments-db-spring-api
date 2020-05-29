@@ -102,7 +102,7 @@ databaseChangeLog:
                   type: varchar(100)
               - column:
                   name: expiry_date
-                  type: date
+                  type: datetime
               - column:
                   name: users_id
                   type: bigint

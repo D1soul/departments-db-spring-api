@@ -1,6 +1,7 @@
 package ru.d1soul.departments.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.api.service.authentification.UserService;
 import ru.d1soul.departments.security.jwt.dto.PasswordResetDto;
@@ -27,6 +29,7 @@ import ru.d1soul.departments.web.exception.BadFormException;
 import ru.d1soul.departments.web.exception.NotFoundException;
 import ru.d1soul.departments.web.exception.UnauthorizedException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -126,7 +129,34 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @Transactional
+
+    /*
+    @RequestMapping(value = "/redirect", method = RequestMethod.GET)
+    public ResponseEntity<Map<Object, Object>> find(HttpServletResponse httpServletResponse) {
+        Map<Object, Object> map = new HashMap<>();
+      //  map.put("message", "goBack!");
+
+
+        map.put("Location", "http://stackoverflow.com");
+        httpServletResponse.setHeader("Location", "http://localhost:4200/login");
+        httpServletResponse.setStatus(302);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+     */
+
+
+    @RequestMapping(value = "/redirect", method = RequestMethod.GET)
+    public void find( RedirectAttributes redirectAttributes,
+            HttpServletResponse httpServletResponse) {
+            redirectAttributes.addAttribute("message", "goBack!");
+        httpServletResponse.setHeader("Location", "http://localhost:4200/login");
+        httpServletResponse.setStatus(302);
+    }
+
+
+
+  /*  @Transactional
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPasswordMessage(@RequestParam("token") String userToken) {
@@ -144,6 +174,29 @@ public class UserController {
         }
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
+   */
+
+    @Transactional
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/reset-password")
+    public String resetPasswordMessage(@RequestParam("token") String userToken) {
+
+        Map<String, String> map = new HashMap<>();
+        PasswordResetToken resetToken = resetPasswordService.findByToken(userToken).orElseThrow(()-> {
+            throw new BadFormException("Токен не обнаружен!");
+        });
+        if (resetToken.isExpired()){
+            map.put("error", "Срок действия токена истек, пожалуйста, снова запросите новый пароль.");
+            resetPasswordService.deleteByToken(userToken);
+        }
+        else {
+            map.put("token", resetToken.getToken());
+        }
+        return "http://stackoverflow.com";
+    }
+
+
 
 
     @ResponseStatus(HttpStatus.OK)
