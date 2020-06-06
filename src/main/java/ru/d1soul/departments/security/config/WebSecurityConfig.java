@@ -3,6 +3,7 @@ package ru.d1soul.departments.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -50,15 +51,41 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint())
-                    .accessDeniedHandler(accessDeniedHandler())
-                    .and().apply(new JwtConfigurer(jwtTokenProvider));
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler())
+                .and().apply(new JwtConfigurer(jwtTokenProvider));
 
         httpSecurity.authorizeRequests()
-                    .antMatchers("/auth/login", "/auth/registration", "/auth/users", "/auth/forgot-password*", "/auth/reset-password*", "/auth/redirect").permitAll()
-                    .anyRequest().authenticated();
+                .antMatchers("/departments-app/auth/login",
+                                         "/departments-app/auth/registration",
+                                         "/departments-app/auth/forgot-password*",
+                                         "/departments-app/auth/reset-password*").hasRole("ANONYMOUS")
+                .antMatchers("/departments-app/auth/users*").hasRole("ADMIN")
+                .antMatchers("/departments-app/auth/users/{username}",
+                                         "/departments-app/auth/changing-password").hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET,
+                              "/departments-app/main_departments*",
+                                          "/departments-app/main_dept_employees*",
+                                          "/departments-app/sub-departments*",
+                                          "/departments-app/sub-dept_employees*").hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.POST,
+                              "/departments-app/main_departments*",
+                                          "/departments-app/main_dept_employees*",
+                                          "/departments-app/sub-departments*",
+                                          "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,
+                               "/departments-app/main_departments*",
+                                           "/departments-app/main_dept_employees*",
+                                           "/departments-app/sub-departments*",
+                                           "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,
+                                "/departments-app/main_departments*",
+                                            "/departments-app/main_dept_employees*",
+                                            "/departments-app/sub-departments*",
+                                            "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                .anyRequest().authenticated();
     }
 
     @Bean
@@ -69,7 +96,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler(){
-        return (request, response, authException) -> response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                "Доступ закрыт!");
-    }
+     return (request, response, accessDeniedException) -> response.sendError(HttpServletResponse.SC_FORBIDDEN,
+             "Доступ закрыт!");
+     }
+
 }

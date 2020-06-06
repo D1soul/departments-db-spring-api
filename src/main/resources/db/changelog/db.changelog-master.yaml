@@ -33,6 +33,9 @@ databaseChangeLog:
               - column:
                   name: gender
                   type: varchar(100)
+              - column:
+                  name: is_banned
+                  type: boolean
 
   - changeSet:
       id: сreate_table_Roles

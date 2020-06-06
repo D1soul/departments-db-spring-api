@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
         user.setConfirmPassword(bCryptPasswordEncoder.encode(user.getConfirmPassword()));
         user.setBirthDate(user.getBirthDate());
         user.setGender(user.getGender());
+        user.setIsBanned(user.getIsBanned());
         user.setRoles(user.getRoles());
         return userRepository.save(user);
     }

@@ -2,6 +2,7 @@ package ru.d1soul.departments.service.authentification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.d1soul.departments.api.repository.authentification.ResetPasswordRepository;
 import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.model.PasswordResetToken;
@@ -18,6 +19,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
         this.resetPasswordRepository = resetPasswordRepository;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<PasswordResetToken> findByToken(String token) {
         return resetPasswordRepository.findByToken(token);

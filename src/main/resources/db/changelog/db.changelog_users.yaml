@@ -15,13 +15,16 @@ databaseChangeLog:
                   value: "silerit@gmail.com"
               - column:
                   name: password
-                  value: "$2a$10$O9k0lg/uELXbHchLEi5sDuxrkiyhZ/3JL9DulI1ZlRSr/ixRhMWh6" #"admin"
+                  value: "$2a$10$vBeF5MYpmrNXrSKNkrP.JOuLOp9YCp/r3hZuouQYO8GpmTnh.mi3." # admin№1
               - column:
                   name: confirm_password
-                  value: "$2a$10$0ZdmPCT4ye3PapEnd8CfcOpRLG.VlgC1y075tdV2MVzbZan9dzaxu" #"admin"
+                  value: "$2a$10$bUBr437wcb7IFyNNeWz/teu0oaD59YmVzqSMAb7rCkb7OvrzPpXja" # admin№1
               - column:
                   name: birth_date
                   value: "2020-04-01"
               - column:
                   name: gender
                   value: "male"
+              - column:
+                  name: is_banned
+                  value: false

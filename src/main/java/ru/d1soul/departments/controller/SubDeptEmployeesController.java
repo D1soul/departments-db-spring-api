@@ -1,5 +1,6 @@
 package ru.d1soul.departments.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import ru.d1soul.departments.api.service.department.SubDeptEmployeesService;
 import ru.d1soul.departments.model.SubDeptEmployee;
 import ru.d1soul.departments.web.exception.BadFormException;
@@ -24,12 +25,14 @@ public class SubDeptEmployeesController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = "/sub-dept_employees")
     public List<SubDeptEmployee> findAllSubDeptEmpls() {
         return subDeptEmployeesService.findAll(Sort.by("id").ascending());
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = "/sub-dept_employees/"
             + "{lastName}/{firstName}/{middleName}")
     public SubDeptEmployee findSubDeptEmplByFullName(
@@ -43,6 +46,7 @@ public class SubDeptEmployeesController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/sub-dept_employees")
     public SubDeptEmployee createSubDeptEmpl(@Valid @RequestBody SubDeptEmployee subDeptEmployee) {
         if (subDeptEmployeesService.findByFullName(subDeptEmployee.getLastName(),
@@ -56,6 +60,7 @@ public class SubDeptEmployeesController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/sub-dept_employees/"
             + "{lastName}/{firstName}/{middleName}")
     public SubDeptEmployee updateSubDeptEmplByFullName(
@@ -78,6 +83,7 @@ public class SubDeptEmployeesController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value =  "/sub-dept_employees/"
             + "{lastName}/{firstName}/{middleName}")
     public void deleteSubDeptEmplByFullName(

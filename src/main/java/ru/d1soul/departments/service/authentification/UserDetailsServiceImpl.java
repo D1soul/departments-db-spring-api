@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.d1soul.departments.api.repository.authentification.UserRepository;
+import ru.d1soul.departments.model.User;
 import ru.d1soul.departments.security.jwt.dto.JwtUserDetails;
 import ru.d1soul.departments.web.exception.BadFormException;
 
@@ -21,8 +22,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return JwtUserDetails.createUser(userRepository.findByUsername(username).orElseThrow(()-> {
+        User user = userRepository.findByUsername(username).orElseThrow(()-> {
             throw new BadFormException("Пользователь с таким именем не найден!");
-        }));
+        });
+        if (user.getIsBanned()){
+            throw new BadFormException("Ваш аккаунт забанен!");
+        }
+        else {
+            return JwtUserDetails.createUser(user);
+        }
     }
 }

@@ -19,6 +19,7 @@ public class JwtUserDetails implements UserDetails {
     private final String confirmPassword;
     private final Date birthDate;
     private final String gender;
+    private final Boolean isBanned;
     private final Collection<? extends GrantedAuthority> authorities;
 
     @Override
@@ -36,15 +37,14 @@ public class JwtUserDetails implements UserDetails {
                 user.getConfirmPassword(),
                 user.getBirthDate(),
                 user.getGender(),
+                user.getIsBanned(),
                 getAuthoritiesSet(new HashSet<>(user.getRoles()))
         );
     }
 
     public static Set<GrantedAuthority> getAuthoritiesSet(Set<Role> roles){
         Set<GrantedAuthority> rolesSet = new HashSet<>();
-        roles.forEach(role -> {
-            rolesSet.add(new SimpleGrantedAuthority(role.getRole()));
-        });
+        roles.forEach(role -> rolesSet.add(new SimpleGrantedAuthority(role.getRole())));
         return rolesSet;
     }
 
@@ -64,8 +64,8 @@ public class JwtUserDetails implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
+    public  boolean isAccountNonLocked() {
+        return !isBanned;
     }
 
     @Override

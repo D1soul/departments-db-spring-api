@@ -46,6 +46,9 @@ public class User implements Serializable {
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "is_banned")
+    private Boolean isBanned;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
                joinColumns = @JoinColumn(name="users_id", referencedColumnName = "id"),

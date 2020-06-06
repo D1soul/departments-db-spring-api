@@ -1,5 +1,6 @@
 package ru.d1soul.departments.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import ru.d1soul.departments.api.service.department.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
 import ru.d1soul.departments.web.exception.BadFormException;
@@ -12,8 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/departments-app")
 public class MainDepartmentsController {
 
@@ -25,12 +25,14 @@ public class MainDepartmentsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = "/main_departments")
     public List<MainDepartment> findAllMainDepartments() {
         return mainDepartmentService.findAll(Sort.by("id").ascending());
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = "/main_departments/{name}")
     public MainDepartment findMainDeptByName(@PathVariable String name) {
         return mainDepartmentService.findByName(name).orElseThrow(()->{
@@ -39,6 +41,7 @@ public class MainDepartmentsController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/main_departments")
     public MainDepartment createMainDept(@Valid @RequestBody MainDepartment mainDepartment) {
         if (mainDepartmentService.findByName(mainDepartment.getName()).isEmpty()) {
@@ -49,6 +52,7 @@ public class MainDepartmentsController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/main_departments/{name}")
     public MainDepartment updateMainDeptByName(
             @PathVariable String name,
@@ -62,6 +66,7 @@ public class MainDepartmentsController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = "/main_departments/{name}")
     public void deleteMainDeptByName(@PathVariable String name) {
         mainDepartmentService.deleteByName(name);
