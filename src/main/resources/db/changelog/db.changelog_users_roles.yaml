@@ -22,3 +22,102 @@ databaseChangeLog:
               - column:
                   name: roles_id
                   value: 2
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 2
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 3
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 4
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 5
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 6
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 7
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 8
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 9
+              - column:
+                  name: roles_id
+                  value: 1
+
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 10
+              - column:
+                  name: roles_id
+                  value: 1
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: users_id
+                  value: 10
+              - column:
+                  name: roles_id
+                  value: 2

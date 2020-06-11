@@ -3,7 +3,8 @@
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/departmentsDbAngular
+    url: jdbc:postgresql://localhost:5432/departmentsDbAngular  #for postgres
+    # url: jdbc:postgresql://localhost:9300/departmentsDbAngular  #for docker
     username: postgres
     password: root
 
@@ -42,7 +43,6 @@ spring:
     properties:
       mail:
         smtp:
-          #from: wild.bill.java.man@gmail.com
           auth: true
           starttls:
             enable: true
@@ -55,5 +55,5 @@ logging:
     root: info
 
 jwt:
-   secretKey: secretKey
-   validityPeriod: 3600000
+  secretKey: secretKey
+  validityPeriod: 3600000

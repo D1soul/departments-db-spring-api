@@ -20,6 +20,6 @@ public class SubDepartmentDeserializer extends JsonDeserializer<SubDepartment> {
 
         String name = jsonParser.getValueAsString();
 
-        return  subDepartmentService.findByName(name).orElseThrow();
+        return  subDepartmentService.findByName(name);
     }
 }

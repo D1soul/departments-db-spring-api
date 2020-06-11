@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface MainDepartmentRepository extends JpaRepository<MainDepartment, Long> {
     List<MainDepartment> findAll(Sort sort);
     Optional<MainDepartment> findByName(String name);
+    Optional<MainDepartment> findByNameAndIdNot(String name, Long id);
     void deleteByName(String name);
 }

@@ -24,7 +24,7 @@ public class JwtTokenProvider {
         this.userDetailsService = userDetailsService;
     }
 
-    @Value("{jwt.secretKey}")
+    @Value("${jwt.secretKey}")
     private String secretKey;
 
     @Value("${jwt.validityPeriod}")

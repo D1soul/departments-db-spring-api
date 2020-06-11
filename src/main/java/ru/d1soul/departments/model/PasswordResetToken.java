@@ -3,8 +3,9 @@ package ru.d1soul.departments.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.d1soul.departments.model.User;
+import lombok.NonNull;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,12 +23,19 @@ public class PasswordResetToken implements Serializable {
     @Column(name = "id")
     private Long id;
 
+
+    @NonNull
+    @NotNull
     @Column(name = "token")
     private String  token;
 
+    @NonNull
+    @NotNull
     @Column(name = "expiry_date")
     private Date expiryDate;
 
+    @NonNull
+    @NotNull
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "users_id", referencedColumnName = "id")
     private User user;

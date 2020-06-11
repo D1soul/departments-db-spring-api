@@ -12,7 +12,7 @@ databaseChangeLog:
                   value: "admin"
               - column:
                   name: email
-                  value: "silerit@gmail.com"
+                  value: "wild.bill.java.man@gmail.com"
               - column:
                   name: password
                   value: "$2a$10$vBeF5MYpmrNXrSKNkrP.JOuLOp9YCp/r3hZuouQYO8GpmTnh.mi3." # admin№1
@@ -25,6 +25,231 @@ databaseChangeLog:
               - column:
                   name: gender
                   value: "male"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "JohnDoe"
+              - column:
+                  name: email
+                  value: "JohnDoe@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$ygyLNlGs9xy/LxHvzO1jju/Q2tWjpf9jHnvGcQEZwxyqVJxlEjVaC" # JohnDoe
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$QRNHTSsME9LZ6ldFTjC/sOeC1MAQI1PnPV2RWzqZatTLwN9uGffJq" # JohnDoe
+              - column:
+                  name: birth_date
+                  value: "2014-05-06"
+              - column:
+                  name: gender
+                  value: "male"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "BlackBill"
+              - column:
+                  name: email
+                  value: "BlackBill@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$zV394sQaqnVrXkJ4QuHUkuJIv8tRgol0Ug0.G7OH8PUnbRZHHG30K" # BlackBill
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$l9vbCJFiyoU578287DNQqOvA/4MP6XDgjMybOiNLFG51zYApvdyTC" # BlackBill
+              - column:
+                  name: birth_date
+                  value: "1988-04-11"
+              - column:
+                  name: gender
+                  value: "male"
+              - column:
+                  name: is_banned
+                  value: true
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "MysteriousG1rl"
+              - column:
+                  name: email
+                  value: "MysteriousG1rl@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$1zkk8u.p6yqH2uQ34eXZLedzeS/usRs0TNJxYtjfkE2RdUoHsoeOW" # MysteriousG1rl
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$2CJr7/S.IXLuf9Pud4cpZOYzUHls87e61i2VJ2nMJ78YkZ53ycSE6" # MysteriousG1rl
+              - column:
+                  name: birth_date
+                  value: "1993-10-05"
+              - column:
+                  name: gender
+                  value: "female"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "DarkHole"
+              - column:
+                  name: email
+                  value: "DarkHole@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$H97w3I5MUpfwA0DKvapq1utGUmQfk8ZKrfPi.NxHMK8u1w2eccEOS" # DarkHole
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$bjB0Ix1yq9nBLdfnvXY3j.anzEKDT9W8ihOKTYLiiySWMQyUF.lZS" # DarkHole
+              - column:
+                  name: birth_date
+                  value: "1985-12-01"
+              - column:
+                  name: gender
+                  value: "female"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "MadMax"
+              - column:
+                  name: email
+                  value: "MadMax@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$Fr658qCK1n6Yrw.VZTrYmuYrQ63UPsA3/zX50hdXIq9obRfBE3Qpu" # MadMax
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$bx2L7vDuqrF78f7pNtUbz./yt5aKvalU.Jex6wKB157RcUxH/Ga76" # MadMax
+              - column:
+                  name: birth_date
+                  value: "1988-09-09"
+              - column:
+                  name: gender
+                  value: "male"
+              - column:
+                  name: is_banned
+                  value: true
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "LadyFairy"
+              - column:
+                  name: email
+                  value: "LadyFairy@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$M4Jm2ffAJK7IaF0.SZsF/Ol.ahHXhei2yaWHbi3Ba2fgivs.lBagq" # LadyFairy
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$GRkSr8h2gGg7tG2ehfprGuUUYSPfmezjquliCmO0ruX3kcnwOmYgO" # LadyFairy
+              - column:
+                  name: birth_date
+                  value: "1992-11-10"
+              - column:
+                  name: gender
+                  value: "female"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "JackDoe"
+              - column:
+                  name: email
+                  value: "JackDoe@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$ozqA67BVQ6sYNGk.L8bQ6e8nH1n3lSuOLjBabvayBVdvBWtC/Y4gy" # JackDoe
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$Pbh/v/MwV8QJ.XoHvVHJ4Oe/x9D9vQjQj6GVIdOhnp7yJaxIHeNcy" # JackDoe
+              - column:
+                  name: birth_date
+                  value: "1989-08-05"
+              - column:
+                  name: gender
+                  value: "male"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "Strongman"
+              - column:
+                  name: email
+                  value: "Strongman@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$RQFR0mJIhoLOW1uGOhrL2ui9.pw/qx/EUPVnwxL9izAPc6Qggu1lG" # Strongman
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$BVM6tsWnDLm98dJSVqiFrelSS0a5Y0aCKBeVO8kxiBQ9G1.734LGa" # Strongman
+              - column:
+                  name: birth_date
+                  value: "2003-09-11"
+              - column:
+                  name: gender
+                  value: "male"
+              - column:
+                  name: is_banned
+                  value: false
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "G1rlNumber1"
+              - column:
+                  name: email
+                  value: "G1rlNumber1@testgmail.com"
+              - column:
+                  name: password
+                  value: "$2a$10$V61iF5VZktx.kybuNpIp5uNBg9yjUoKR3.wf3aR0FNypYa6vYw0n." # G1rlNumber1
+              - column:
+                  name: confirm_password
+                  value: "$2a$10$gsAEvFC1IBkBl/FE0d2xKe3.5vg2JrG07Pbex/7grB7D3D0uRmw1m" # G1rlNumber1
+              - column:
+                  name: birth_date
+                  value: "1997-04-08"
+              - column:
+                  name: gender
+                  value: "female"
               - column:
                   name: is_banned
                   value: false

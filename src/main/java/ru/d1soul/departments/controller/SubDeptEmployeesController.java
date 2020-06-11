@@ -3,8 +3,6 @@ package ru.d1soul.departments.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import ru.d1soul.departments.api.service.department.SubDeptEmployeesService;
 import ru.d1soul.departments.model.SubDeptEmployee;
-import ru.d1soul.departments.web.exception.BadFormException;
-import ru.d1soul.departments.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -39,24 +37,14 @@ public class SubDeptEmployeesController {
             @PathVariable String lastName,
             @PathVariable String firstName,
             @PathVariable String middleName){
-       return subDeptEmployeesService.findByFullName(lastName, firstName, middleName).orElseThrow(()-> {
-           throw new NotFoundException("Сотрудник с Ф.И.О. : "
-                   + lastName + " " + firstName + " " + middleName + " не обнаружен!");
-       });
+       return subDeptEmployeesService.findByFullName(lastName, firstName, middleName);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/sub-dept_employees")
     public SubDeptEmployee createSubDeptEmpl(@Valid @RequestBody SubDeptEmployee subDeptEmployee) {
-        if (subDeptEmployeesService.findByFullName(subDeptEmployee.getLastName(),
-                subDeptEmployee.getFirstName(), subDeptEmployee.getMiddleName()).isEmpty()) {
-            return subDeptEmployeesService.save(subDeptEmployee);
-        }
-        else throw new BadFormException("Сотрудник с Ф.И.О. : "
-                + subDeptEmployee.getLastName() + " "
-                + subDeptEmployee.getFirstName()  + " "
-                + subDeptEmployee.getMiddleName() + " уже существует");
+      return subDeptEmployeesService.save(subDeptEmployee);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -68,18 +56,7 @@ public class SubDeptEmployeesController {
             @PathVariable String firstName,
             @PathVariable String middleName,
             @Valid @RequestBody SubDeptEmployee updateSubEmpl){
-        return subDeptEmployeesService.findByFullName(lastName, firstName, middleName).map(subEmpl -> {
-            subEmpl.setFirstName(updateSubEmpl.getFirstName());
-            subEmpl.setMiddleName(updateSubEmpl.getMiddleName());
-            subEmpl.setLastName(updateSubEmpl.getLastName());
-            subEmpl.setBirthDate(updateSubEmpl.getBirthDate());
-            subEmpl.setPassport(updateSubEmpl.getPassport());
-            subEmpl.setSubDepartment(updateSubEmpl.getSubDepartment());
-            return subDeptEmployeesService.save(subEmpl);
-        }).orElseThrow( ()-> {
-            throw new NotFoundException("Сотрудник с Ф.И.О. : "
-                    + lastName + " " + firstName + " " + middleName + " не обнаружен!");
-        });
+       return subDeptEmployeesService.update(lastName, firstName, middleName, updateSubEmpl);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

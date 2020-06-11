@@ -12,6 +12,8 @@ public interface SubDeptEmployeesRepository extends JpaRepository<SubDeptEmploye
     List<SubDeptEmployee> findAll(Sort sort);
     Optional<SubDeptEmployee> findByLastNameAndFirstNameAndAndMiddleName(
             String lastName, String firstName, String middleName);
+        Optional<SubDeptEmployee> findByLastNameAndFirstNameAndAndMiddleNameAndIdNot(
+                String lastName, String firstName, String middleName, Long id);
     void deleteByLastNameAndFirstNameAndMiddleName(
             String lastName, String firstName, String middleName);
 }

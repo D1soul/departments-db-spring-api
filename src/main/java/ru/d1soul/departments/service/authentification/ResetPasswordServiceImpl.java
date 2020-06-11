@@ -8,8 +8,8 @@ import ru.d1soul.departments.api.service.authentification.ResetPasswordService;
 import ru.d1soul.departments.model.PasswordResetToken;
 import java.util.Optional;
 
-
 @Service
+@Transactional
 public class ResetPasswordServiceImpl implements ResetPasswordService {
 
     private  ResetPasswordRepository resetPasswordRepository;

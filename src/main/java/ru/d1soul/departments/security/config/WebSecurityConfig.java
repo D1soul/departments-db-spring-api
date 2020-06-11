@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     protected void configureGlobal(AuthenticationManagerBuilder managerBuilder) throws Exception{
+        managerBuilder.eraseCredentials(false);
         managerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -62,29 +63,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                          "/departments-app/auth/registration",
                                          "/departments-app/auth/forgot-password*",
                                          "/departments-app/auth/reset-password*").hasRole("ANONYMOUS")
-                .antMatchers("/departments-app/auth/users*").hasRole("ADMIN")
-                .antMatchers("/departments-app/auth/users/{username}",
+                .antMatchers("/departments-app/auth/users").hasRole("ADMIN")
+                .antMatchers("/departments-app/auth/users/**",
                                          "/departments-app/auth/changing-password").hasAnyRole("USER", "ADMIN")
                 .antMatchers(HttpMethod.GET,
-                              "/departments-app/main_departments*",
-                                          "/departments-app/main_dept_employees*",
-                                          "/departments-app/sub-departments*",
-                                          "/departments-app/sub-dept_employees*").hasAnyRole("USER", "ADMIN")
+                              "/departments-app/main_departments/**",
+                                          "/departments-app/main_dept_employees/**",
+                                          "/departments-app/sub-departments/**",
+                                          "/departments-app/sub-dept_employees/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers(HttpMethod.POST,
-                              "/departments-app/main_departments*",
-                                          "/departments-app/main_dept_employees*",
-                                          "/departments-app/sub-departments*",
-                                          "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                              "/departments-app/main_departments/**",
+                                          "/departments-app/main_dept_employees/**",
+                                          "/departments-app/sub-departments/**",
+                                          "/departments-app/sub-dept_employees/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.PUT,
-                               "/departments-app/main_departments*",
-                                           "/departments-app/main_dept_employees*",
-                                           "/departments-app/sub-departments*",
-                                           "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                               "/departments-app/main_departments/**",
+                                           "/departments-app/main_dept_employees/**",
+                                           "/departments-app/sub-departments/**",
+                                           "/departments-app/sub-dept_employees/**").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE,
-                                "/departments-app/main_departments*",
-                                            "/departments-app/main_dept_employees*",
-                                            "/departments-app/sub-departments*",
-                                            "/departments-app/sub-dept_employees*").hasAnyRole("ADMIN")
+                                "/departments-app/main_departments/**",
+                                            "/departments-app/main_dept_employees/**",
+                                            "/departments-app/sub-departments/**",
+                                            "/departments-app/sub-dept_employees/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated();
     }
 

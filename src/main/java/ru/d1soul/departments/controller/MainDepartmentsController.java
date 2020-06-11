@@ -3,8 +3,6 @@ package ru.d1soul.departments.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import ru.d1soul.departments.api.service.department.MainDepartmentService;
 import ru.d1soul.departments.model.MainDepartment;
-import ru.d1soul.departments.web.exception.BadFormException;
-import ru.d1soul.departments.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -35,20 +33,14 @@ public class MainDepartmentsController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping(value = "/main_departments/{name}")
     public MainDepartment findMainDeptByName(@PathVariable String name) {
-        return mainDepartmentService.findByName(name).orElseThrow(()->{
-            throw new NotFoundException("Департамент с названием: " + name + " не обнаружен!");
-        });
+        return mainDepartmentService.findByName(name);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/main_departments")
     public MainDepartment createMainDept(@Valid @RequestBody MainDepartment mainDepartment) {
-        if (mainDepartmentService.findByName(mainDepartment.getName()).isEmpty()) {
-            return mainDepartmentService.save(mainDepartment);
-        }
-        else throw new BadFormException("Департамент с названием: "
-                                    + mainDepartment.getName() + " уже существует");
+        return mainDepartmentService.save(mainDepartment);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -57,12 +49,7 @@ public class MainDepartmentsController {
     public MainDepartment updateMainDeptByName(
             @PathVariable String name,
             @Valid @RequestBody MainDepartment mainDepUpdate) {
-        return mainDepartmentService.findByName(name).map(mainDep -> {
-            mainDep.setName(mainDepUpdate.getName());
-                return mainDepartmentService.save(mainDep);
-        }).orElseThrow( ()-> {
-            throw new NotFoundException("Департамент с названием: " + name + " не обнаружен!");
-        });
+        return mainDepartmentService.update(name, mainDepUpdate);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

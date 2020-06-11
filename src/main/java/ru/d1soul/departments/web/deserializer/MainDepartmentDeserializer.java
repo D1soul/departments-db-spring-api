@@ -20,6 +20,6 @@ public class MainDepartmentDeserializer extends JsonDeserializer<MainDepartment>
 
         String name = jsonParser.getValueAsString();
 
-        return mainDepartmentService.findByName(name).orElseThrow();
+        return mainDepartmentService.findByName(name);
     }
 }

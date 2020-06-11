@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.d1soul.departments.web.exception.BadFormException;
+import ru.d1soul.departments.web.exception.NotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,18 +25,61 @@ public class MainDeptEmployeesServiceImpl implements MainDeptEmployeesService {
     @Override
     @Transactional(readOnly = true)
     public List<MainDeptEmployee> findAll(Sort sort) {
-        return mainDeptEmployeesRepository.findAll(Sort.by("id").ascending());
+        return mainDeptEmployeesRepository.findAll(sort);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<MainDeptEmployee> findByFullName(String lastName, String firstName, String middleName) {
-        return mainDeptEmployeesRepository.findByLastNameAndFirstNameAndAndMiddleName(lastName, firstName, middleName);
+    public MainDeptEmployee findByFullName(String lastName, String firstName, String middleName) {
+        return mainDeptEmployeesRepository.findByLastNameAndFirstNameAndAndMiddleName(
+                                                   lastName, firstName, middleName).orElseThrow(() -> {
+            throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                    + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+        });
     }
 
     @Override
     public MainDeptEmployee save(MainDeptEmployee mainDeptEmployee) {
-        return mainDeptEmployeesRepository.save(mainDeptEmployee);
+        if (mainDeptEmployeesRepository.findByLastNameAndFirstNameAndAndMiddleName(
+                mainDeptEmployee.getLastName(),
+                mainDeptEmployee.getFirstName(),
+                mainDeptEmployee.getMiddleName()).isEmpty()){
+            return mainDeptEmployeesRepository.save(mainDeptEmployee);
+        }
+        else throw new BadFormException("Сотрудник с Ф.И.О. : "
+                + mainDeptEmployee.getLastName() + " "
+                + mainDeptEmployee.getFirstName()  + " "
+                + mainDeptEmployee.getMiddleName() + " уже существует");
+    }
+
+    @Override
+    public MainDeptEmployee update(String lastName, String firstName,
+                                   String middleName, MainDeptEmployee updMainDeptEmpl) {
+        String uniqueLastName = updMainDeptEmpl.getLastName();
+        String uniqueFirstName = updMainDeptEmpl.getFirstName();
+        String uniqueMiddleName = updMainDeptEmpl.getMiddleName();
+        return mainDeptEmployeesRepository.findByLastNameAndFirstNameAndAndMiddleName(
+                                                lastName, firstName, middleName).map(mainDepEmpl -> {
+            if (mainDeptEmployeesRepository.findByLastNameAndFirstNameAndAndMiddleNameAndIdNot(
+                    uniqueLastName, uniqueFirstName, uniqueMiddleName, mainDepEmpl.getId()).isPresent()){
+                throw new BadFormException("Сотрудник с Ф.И.О. : "
+                        + updMainDeptEmpl.getLastName() + " "
+                        + updMainDeptEmpl.getFirstName()  + " "
+                        + updMainDeptEmpl.getMiddleName() + " уже существует");
+            }
+            else {
+                mainDepEmpl.setFirstName(updMainDeptEmpl.getFirstName());
+                mainDepEmpl.setMiddleName(updMainDeptEmpl.getMiddleName());
+                mainDepEmpl.setLastName(updMainDeptEmpl.getLastName());
+                mainDepEmpl.setBirthDate(updMainDeptEmpl.getBirthDate());
+                mainDepEmpl.setPassport(updMainDeptEmpl.getPassport());
+                mainDepEmpl.setMainDepartment(updMainDeptEmpl.getMainDepartment());
+                return mainDeptEmployeesRepository.save(mainDepEmpl);
+            }
+        }).orElseThrow(() -> {
+            throw new NotFoundException("Сотрудник с Ф.И.О. : "
+                    + lastName + " " + firstName + " " + middleName + " не обнаружен!");
+        });
     }
 
     @Override
