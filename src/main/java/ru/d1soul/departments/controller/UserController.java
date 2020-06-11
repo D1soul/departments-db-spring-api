@@ -179,9 +179,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("permitAll()")
     @PutMapping("/reset-password")
-    public ResponseEntity<Map<String, Object>> resetForgottenPassword(@Valid @RequestBody  PasswordResetDto passwordReset) {
+    public ResponseEntity<Map<String, Object>> resetForgottenPassword(@Valid
+                                                  @RequestBody  PasswordResetDto passwordReset) {
         PasswordResetToken token = resetPasswordService.findByToken(passwordReset.getToken()).orElseThrow(()->{
-            throw new NotFoundException("Проверочный токен не обнаружен! Попробуйте снова повторить сброс пароля.");
+            throw new NotFoundException("Проверочный токен некорректен, либо уже использован!");
         });
         Map<String, Object> map = new HashMap<>();
         User user = token.getUser();
